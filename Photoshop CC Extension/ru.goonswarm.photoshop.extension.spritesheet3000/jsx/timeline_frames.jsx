@@ -2,8 +2,12 @@
 /*global $, Folder*/
 var SPRITE_SHEET_3000_VERSION = 1;
 
-function exportToJSON(filterMode)
+function exportToJSON(exportInfoJson)
 {    
+    var exportInfo = JSON.parse(exportInfoJson);
+    var imageFormat = exportInfo.imageFormat;
+    var filterMode = exportInfo.filterMode;
+    
     var destFolder = Folder.selectDialog("Please select folder to process");
     if (destFolder == null)
     {
@@ -48,9 +52,32 @@ function exportToJSON(filterMode)
 
             var playbackTime = getFramePropertyDouble(frameId, "animationFrameDelay");
             var layer = getVisibleLayer(doc);
-            var filename = layer.name + ".png";
             
-            savePng(destFolderName, filename);
+            var fileext = ".unknown";
+            if (imageFormat == "png8" || imageFormat == "png24")
+            {
+                fileext = ".png";
+            }
+            else if (imageFormat == "jpeg")
+            {
+                fileext = ".jpg";
+            }
+            
+            var filename = layer.name + fileext;
+            var saveFile = getOrCreateSaveFile(destFolderName, filename);
+            
+            if (imageFormat == "png8")
+            {
+                savePng8(saveFile);
+            }
+            else if (imageFormat == "png24")
+            {
+                savePng24(saveFile);
+            }
+            else if (imageFormat == "jpeg")
+            {
+                saveJpeg(saveFile);
+            }
 
             var frame = {};
             frame["filename"] = filename;
@@ -83,37 +110,52 @@ function saveTextByDocumentName(destinationFolder, txt)
     var fileext = decodeURI(app.activeDocument.name).replace(/^.*\./,'');
     if (fileext.toLowerCase() != 'psd') return;
 
-    saveText(destinationFolder, filename + ".txt", txt);
+    var saveFile = getOrCreateSaveFile(destinationFolder, filename + ".txt");
+    saveText(saveFile, txt);
 }
 
-function saveText(destinationFolder, filename, txt)
+function getOrCreateSaveFile(destinationFolder, filename)
 {
     var saveFile = File(destinationFolder + "/" + filename);
 
     if(saveFile.exists)
         saveFile.remove();
+    
+    return saveFile;
+}
 
+function saveText(saveFile, txt)
+{
     saveFile.encoding = "UTF8";
     saveFile.open("e", "TEXT", "????");
     saveFile.writeln(txt);
     saveFile.close();
 }
 
-function savePng(destinationFolder, filename)
+function savePng8(saveFile)
 {
-    var saveFile = File(destinationFolder + "/" + filename);
-    
-    if(saveFile.exists)
-        saveFile.remove();
-    
     var pngOpts = new ExportOptionsSaveForWeb;  
     pngOpts.format = SaveDocumentType.PNG  
-    pngOpts.PNG8 = false;  
+    pngOpts.PNG8 = true;  
     pngOpts.transparency = true;  
     pngOpts.interlaced = false;  
     pngOpts.quality = 100;  
-    activeDocument.exportDocument(new File(saveFile),ExportType.SAVEFORWEB,pngOpts);  
+    activeDocument.exportDocument(saveFile,ExportType.SAVEFORWEB,pngOpts);  
 }
+
+function savePng24(saveFile)
+{
+    var pngSaveOptions = new PNGSaveOptions(); 
+    activeDocument.saveAs(saveFile, pngSaveOptions, true, Extension.LOWERCASE);
+}
+
+function saveJpeg(saveFile) { 
+    var jpegSaveOptions = new JPEGSaveOptions(); 
+    jpegSaveOptions.embedColorProfile = true;
+	jpegSaveOptions.formatOptions = FormatOptions.STANDARDBASELINE;
+	jpegSaveOptions.matte = MatteType.NONE;
+    activeDocument.saveAs(saveFile, jpegSaveOptions, true, Extension.LOWERCASE); 
+} 
 
 function getLayer(doc, layerName)
 {
