@@ -134,19 +134,23 @@ function saveText(saveFile, txt)
 
 function savePng8(saveFile)
 {
-    var pngOpts = new ExportOptionsSaveForWeb;  
-    pngOpts.format = SaveDocumentType.PNG  
-    pngOpts.PNG8 = true;  
-    pngOpts.transparency = true;  
-    pngOpts.interlaced = false;  
-    pngOpts.quality = 100;  
-    activeDocument.exportDocument(saveFile,ExportType.SAVEFORWEB,pngOpts);  
+	savePng(saveFile, true);
 }
 
 function savePng24(saveFile)
 {
-    var pngSaveOptions = new PNGSaveOptions(); 
-    activeDocument.saveAs(saveFile, pngSaveOptions, true, Extension.LOWERCASE);
+    savePng(saveFile, false);
+}
+
+function savePng(saveFile,is8bit)
+{
+	var pngOpts = new ExportOptionsSaveForWeb;  
+    pngOpts.format = SaveDocumentType.PNG  
+    pngOpts.PNG8 = is8bit;  
+    pngOpts.transparency = true;  
+    pngOpts.interlaced = false;  
+    pngOpts.quality = 100;  
+    activeDocument.exportDocument(saveFile,ExportType.SAVEFORWEB,pngOpts);  
 }
 
 function saveJpeg(saveFile) { 
