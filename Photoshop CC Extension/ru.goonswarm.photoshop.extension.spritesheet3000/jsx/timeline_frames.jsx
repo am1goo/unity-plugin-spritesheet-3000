@@ -1,23 +1,26 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
 /*global $, Folder*/
 var SPRITE_SHEET_3000_VERSION = 1;
+var KEY_PREVIOUS_DEST_FOLDER = "spritesheet3000_key_previous_dest_folder";
 
 function exportToJSON(exportInfoJson)
 {    
     var exportInfo = JSON.parse(exportInfoJson);
     var imageFormat = exportInfo.imageFormat;
     var filterMode = exportInfo.filterMode;
-    
-    var destFolder = Folder.selectDialog("Please select folder to process");
+	
+    var tempFolderName = getTempOptions(KEY_PREVIOUS_DEST_FOLDER, "C:\\");
+
+	var destFolder = Folder(tempFolderName).selectDlg("Please select folder to process");
     if (destFolder == null)
     {
         alert("Target folder not defined")
         return null;
     }
+	
     var destFolderName = destFolder.fullName;
-    
-    var doc = activeDocument;
-    
+	saveTempOptions(KEY_PREVIOUS_DEST_FOLDER, destFolderName);
+	
     var requiredUndo = false;
     try
     {
@@ -29,7 +32,8 @@ function exportToJSON(exportInfoJson)
         requiredUndo = false;
         //already converted if exception
     }
-    
+    	
+    var doc = activeDocument;
     var res = {};
     
     var header = {}
@@ -102,6 +106,34 @@ function exportToJSON(exportInfoJson)
     
     alert("Export success, ready for use in Spritesheet 3000");
     return json;
+}
+
+function getDefaultParamValue()
+{ 
+   return stringIDToTypeID("default_param_value"); 
+}
+
+function getTempOptions(key, defaultValue)
+{
+	try
+	{
+		var desc = app.getCustomOptions(key);
+		var str = desc.getString(getDefaultParamValue());
+		return str;
+	}
+	catch(e)
+	{
+		alert(e);
+		saveCustomOptions(key, defaultValue);
+		return defaultValue;
+	}
+}	
+
+function saveTempOptions(key, value)
+{
+	var desc = new ActionDescriptor();
+	desc.putString(getDefaultParamValue(), value, true);
+	app.putCustomOptions(key, desc);
 }
 
 function saveTextByDocumentName(destinationFolder, txt)
