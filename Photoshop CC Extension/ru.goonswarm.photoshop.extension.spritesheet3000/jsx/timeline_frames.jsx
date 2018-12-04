@@ -121,18 +121,31 @@ function getDefaultParamValue()
    return stringIDToTypeID("default_param_value"); 
 }
 
-function getTempOptions(key, defaultValue)
+function hasTempOptions(key)
 {
 	try
+	{
+		var desc = getCustomOptions(key);
+		return desc != null;
+	}
+	catch(e)
+	{
+		return false;
+	}
+}
+
+function getTempOptions(key, defaultValue)
+{
+	var has = hasTempOptions(key);
+	if (has)
 	{
 		var desc = app.getCustomOptions(key);
 		var str = desc.getString(getDefaultParamValue());
 		return str;
 	}
-	catch(e)
+	else
 	{
-		alert(e);
-		saveCustomOptions(key, defaultValue);
+		saveTempOptions(key, defaultValue);
 		return defaultValue;
 	}
 }	
