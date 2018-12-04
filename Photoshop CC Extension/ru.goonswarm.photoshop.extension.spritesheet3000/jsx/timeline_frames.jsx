@@ -4,7 +4,15 @@ var SPRITE_SHEET_3000_VERSION = 1;
 var KEY_PREVIOUS_DEST_FOLDER = "spritesheet3000_key_previous_dest_folder";
 
 function exportToJSON(exportInfoJson)
-{    
+{   
+    var filename = app.activeDocument.name.replace(/\.[^\.]+$/, '');
+    var fileext = decodeURI(app.activeDocument.name).replace(/^.*\./,'');
+    if (fileext.toLowerCase() != 'psd')
+	{
+		alert("This file is not a 'PSD' file");
+		return;
+	}
+ 
     var exportInfo = JSON.parse(exportInfoJson);
     var imageFormat = exportInfo.imageFormat;
     var filterMode = exportInfo.filterMode;
@@ -54,21 +62,21 @@ function exportToJSON(exportInfoJson)
             var frameId = frameIndex + 1;
             goToFrame(frameId);
 
-            var playbackTime = getFramePropertyDouble(frameId, "animationFrameDelay");
-            var layer = getVisibleLayer(doc);
+            var framePlaybackTime = getFramePropertyDouble(frameId, "animationFrameDelay");
+            var frameName = getFrameName(filename, frameId);
             
-            var fileext = ".unknown";
+            var fileExt = ".unknown";
             if (imageFormat == "png8" || imageFormat == "png24")
             {
-                fileext = ".png";
+                fileExt = ".png";
             }
             else if (imageFormat == "jpeg")
             {
-                fileext = ".jpg";
+                fileExt = ".jpg";
             }
             
-            var filename = layer.name + fileext;
-            var saveFile = getOrCreateSaveFile(destFolderName, filename);
+            var frameFilename = frameName + fileExt;
+            var saveFile = getOrCreateSaveFile(destFolderName, frameFilename);
             
             if (imageFormat == "png8")
             {
@@ -84,8 +92,8 @@ function exportToJSON(exportInfoJson)
             }
 
             var frame = {};
-            frame["filename"] = filename;
-            frame["playbackTime"] = playbackTime;
+            frame["filename"] = frameFilename;
+            frame["playbackTime"] = framePlaybackTime;
 
             frames[frameIndex] = frame;
             frameIndex++;
@@ -102,7 +110,7 @@ function exportToJSON(exportInfoJson)
     }
     
     var json = JSON.stringify(res);
-    saveTextByDocumentName(destFolderName, json);
+    saveTextByDocumentName(filename, destFolderName, json);
     
     alert("Export success, ready for use in Spritesheet 3000");
     return json;
@@ -136,12 +144,8 @@ function saveTempOptions(key, value)
 	app.putCustomOptions(key, desc);
 }
 
-function saveTextByDocumentName(destinationFolder, txt)
+function saveTextByDocumentName(filename, destinationFolder, txt)
 {
-    var filename = app.activeDocument.name.replace(/\.[^\.]+$/, '');
-    var fileext = decodeURI(app.activeDocument.name).replace(/^.*\./,'');
-    if (fileext.toLowerCase() != 'psd') return;
-
     var saveFile = getOrCreateSaveFile(destinationFolder, filename + ".txt");
     saveText(saveFile, txt);
 }
@@ -198,19 +202,6 @@ function getLayer(doc, layerName)
     return doc.artLayers.getByName(layerName);
 }
 
-function getVisibleLayer(doc)
-{
-    for (var i = 0; i < doc.artLayers.length; i++) 
-    {
-        var layer = doc.artLayers[i];
-        if (layer.visible)
-        {
-            return layer;
-        }
-    }
-    return null;
-}
-
 function goToFrame(idx)
 {
     var desc = new ActionDescriptor();  
@@ -252,4 +243,16 @@ function getFrameProperty(idx, propertyId)
         alert(e + ': on line ' + e.line);
         return null;
   }
+}
+
+function getFrameName(frameName, frameId)
+{
+	if (frameId < 10)
+	{
+		return frameName + "_0" + frameId;
+	}
+	else
+	{
+		return frameName + "_" + frameId;
+	}
 }
