@@ -16,7 +16,7 @@
         <div>
             <span>Image Format</span>
             <select id="ddl_export_image_format" name="export_image_format">
-                <option>PNG24</option>
+                <option selected="selected">PNG24</option>
                 <option>PNG8</option>
                 <option>JPEG</option>
             </select>
@@ -25,9 +25,19 @@
          <div>
             <span>Filter Mode</span>
             <select id="ddl_export_filter_mode" name="export_filter_mode">
-                <option>Point</option>
+                <option selected="selected">Point</option>
                 <option>Bilinear</option>
                 <option>Trilinear</option>
+            </select>
+        </div>
+        <br>
+		<div>
+            <span>Importer Compression</span>
+            <select id="ddl_export_importer_compression" name="export_importer_compression">
+                <option>Uncompressed</option>
+                <option>Compressed</option>
+                <option selected="selected">CompressedHQ</option>
+				<option>CompressedLQ</option>
             </select>
         </div>
         <br>
