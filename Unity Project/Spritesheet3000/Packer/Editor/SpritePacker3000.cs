@@ -287,7 +287,64 @@ public class SpritePacker3000
         if (headerDict.ContainsKey("exportPixelsPerUnit"))
             exportPixelsPerUnit = int.Parse(headerDict["exportPixelsPerUnit"].ToString());
 
-        SpriteHeaderInfo3000 header = new SpriteHeaderInfo3000(photoshopVersion, formatVersion, exportFilterMode, exportImporterCompression, exportPixelsPerUnit);
+        SpriteMeshType? exportSpriteMeshType = null;
+        if (headerDict.ContainsKey("exportSpriteMeshType"))
+            exportSpriteMeshType = (SpriteMeshType)Enum.Parse(typeof(SpriteMeshType), headerDict["exportSpriteMeshType"].ToString());
+
+        int? exportSpriteAlignment = null;
+        Vector2? exportSpritePivot = null;
+        if (headerDict.ContainsKey("exportSpritePivot"))
+        {
+            Dictionary<string, object> exportSpritePivotDict = headerDict["exportSpritePivot"] as Dictionary<string, object>;
+            float x = exportSpritePivotDict.ContainsKey("x") ? float.Parse(exportSpritePivotDict["x"].ToString()) : 0.5f;
+            float y = exportSpritePivotDict.ContainsKey("y") ? float.Parse(exportSpritePivotDict["y"].ToString()) : 0.5f;
+            Vector2 spritePivot = new Vector2(x, y);
+
+            exportSpritePivot = spritePivot;
+
+            if (spritePivot.x == 0.5f && spritePivot.y == 0.5f)
+            {
+                exportSpriteAlignment = 0;
+            }
+            else if (spritePivot.x == 0 && spritePivot.y == 1)
+            {
+                exportSpriteAlignment = 1;
+            }
+            else if (spritePivot.x == 0.5f && spritePivot.y == 1)
+            {
+                exportSpriteAlignment = 2;
+            }
+            else if (spritePivot.x == 1 && spritePivot.y == 1)
+            {
+                exportSpriteAlignment = 3;
+            }
+            else if (spritePivot.x == 0 && spritePivot.y == 0.5f)
+            {
+                exportSpriteAlignment = 4;
+            }
+            else if (spritePivot.x == 1 && spritePivot.y == 0.5f)
+            {
+                exportSpriteAlignment = 5;
+            }
+            else if (spritePivot.x == 0 && spritePivot.y == 0)
+            {
+                exportSpriteAlignment = 6;
+            }
+            else if (spritePivot.x == 0.5f && spritePivot.y == 0)
+            {
+                exportSpriteAlignment = 7;
+            }
+            else if (spritePivot.x == 1 && spritePivot.y == 0)
+            {
+                exportSpriteAlignment = 8;
+            }
+            else
+            {
+                exportSpriteAlignment = 9;
+            }
+        }
+
+        SpriteHeaderInfo3000 header = new SpriteHeaderInfo3000(photoshopVersion, formatVersion, exportFilterMode, exportImporterCompression, exportPixelsPerUnit, exportSpriteMeshType, exportSpriteAlignment, exportSpritePivot);
 
         //parse frames
         List<SpriteAnimationInfo3000> frames = new List<SpriteAnimationInfo3000>();
@@ -333,6 +390,9 @@ public class SpritePacker3000
         FilterMode? exportFilterMode = clipInfo.header.exportFilterMode;
         TextureImporterCompression? exportImporterCompression = clipInfo.header.exportImporterCompression;
         int? exportPixelsPerUnit = clipInfo.header.exportPixelsPerUnit;
+        SpriteMeshType? exportSpriteMeshType = clipInfo.header.exportSpriteMeshType;
+        int? exportSpriteAlignment = clipInfo.header.exportSpriteAlignment;
+        Vector2? exportSpritePivot = clipInfo.header.exportSpritePivot;
         Debug.Log("[SpritePacker3000] Pack: trying to pack " + clipName + " " + clipInfo);
 
         SpriteAnimationClip3000 clip = CreateOrReplaceAsset(ScriptableObject.CreateInstance<SpriteAnimationClip3000>(), relativeFolder + "/" + clipName);
@@ -353,20 +413,82 @@ public class SpritePacker3000
             string texPath = AssetDatabase.GetAssetPath(tex);
             TextureImporter texImporter = AssetImporter.GetAtPath(texPath) as TextureImporter;
 
-            if (texImporter.textureType != TextureImporterType.Sprite)
+            TextureImporterSettings texSettings = new TextureImporterSettings();
+            texImporter.ReadTextureSettings(texSettings);
+
+            if (texSettings.mipmapEnabled != false)
             {
-                texImporter.textureType = TextureImporterType.Sprite;
+                texSettings.mipmapEnabled = false;
+                saveAndReimport = true;
+            }
+
+            if (texSettings.alphaIsTransparency != true)
+            {
+                texSettings.alphaIsTransparency = true;
+                saveAndReimport = true;
+            }
+
+            if (texSettings.textureType != TextureImporterType.Sprite)
+            {
+                texSettings.textureType = TextureImporterType.Sprite;
+                saveAndReimport = true;
+            }
+
+            if (texSettings.spriteMode != (int)SpriteImportMode.Single)
+            {
+                texSettings.spriteMode = (int)SpriteImportMode.Single;
+                saveAndReimport = true;
+            }
+
+            if (texSettings.wrapMode != TextureWrapMode.Clamp)
+            {
+                texSettings.wrapMode = TextureWrapMode.Clamp;
+                saveAndReimport = true;
+            }
+
+            if (texSettings.spriteMeshType != exportSpriteMeshType)
+            {
+                texSettings.spriteMeshType = exportSpriteMeshType.Value;
                 saveAndReimport = true;
             }
 
             if (exportFilterMode.HasValue)
             {
-                if (texImporter.filterMode != exportFilterMode)
+                if (texSettings.filterMode != exportFilterMode)
                 {
-                    texImporter.filterMode = exportFilterMode.Value;
+                    texSettings.filterMode = exportFilterMode.Value;
                     saveAndReimport = true;
                 }
             }
+
+            if (exportSpriteAlignment.HasValue)
+            {
+                if (texSettings.spriteAlignment != exportSpriteAlignment)
+                {
+                    texSettings.spriteAlignment = exportSpriteAlignment.Value;
+                    saveAndReimport = true;
+                }
+            }
+
+            if (exportSpritePivot.HasValue)
+            {
+                if (texSettings.spritePivot != exportSpritePivot)
+                {
+                    texSettings.spritePivot = exportSpritePivot.Value;
+                    saveAndReimport = true;
+                }
+            }
+
+            if (exportPixelsPerUnit.HasValue)
+            {
+                if (texSettings.spritePixelsPerUnit != exportPixelsPerUnit)
+                {
+                    texSettings.spritePixelsPerUnit = exportPixelsPerUnit.Value;
+                    saveAndReimport = true;
+                }
+            }
+
+            texImporter.SetTextureSettings(texSettings);
 
             if (exportImporterCompression.HasValue)
             {
@@ -376,19 +498,9 @@ public class SpritePacker3000
                     saveAndReimport = true;
                 }
             }
-
-            if (exportPixelsPerUnit.HasValue)
-            {
-                if (texImporter.spritePixelsPerUnit != exportPixelsPerUnit)
-                {
-                    texImporter.spritePixelsPerUnit = exportPixelsPerUnit.Value;
-                    saveAndReimport = true;
-                }
-            }
-
+            
             if (saveAndReimport)
                 texImporter.SaveAndReimport();
-
 
             Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
             if (sprite == null)

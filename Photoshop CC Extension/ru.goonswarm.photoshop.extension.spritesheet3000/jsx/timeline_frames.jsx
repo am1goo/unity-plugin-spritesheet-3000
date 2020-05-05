@@ -18,6 +18,8 @@ function exportToJSON(exportInfoJson)
     var filterMode = exportInfo.filterMode;
 	var importerCompression = exportInfo.importerCompression;
 	var pixelsPerUnit = exportInfo.pixelsPerUnit;
+	var spriteMeshType = exportInfo.spriteMeshType;
+	var spritePivot = exportInfo.spritePivot;
 	
     var tempFolderName = getTempOptions(KEY_PREVIOUS_DEST_FOLDER, "C:\\");
 
@@ -51,12 +53,67 @@ function exportToJSON(exportInfoJson)
     
     var frames = []
     res["frames"] = frames;
+	
+	var spritePivot2 = {}
+	
+	if (spritePivot == "Center")
+	{
+		spritePivot2["x"] = 0.5;
+		spritePivot2["y"] = 0.5;
+	}
+	else if (spritePivot == "Top Left")
+	{
+		spritePivot2["x"] = 0;
+		spritePivot2["y"] = 1;
+	}
+	else if (spritePivot == "Top")
+	{
+		spritePivot2["x"] = 0.5;
+		spritePivot2["y"] = 1;
+	}
+	else if (spritePivot == "Top Right")
+	{
+		spritePivot2["x"] = 1;
+		spritePivot2["y"] = 1;
+	}
+	else if (spritePivot == "Left")
+	{
+		spritePivot2["x"] = 0;
+		spritePivot2["y"] = 0.5;
+	}
+	else if (spritePivot == "Right")
+	{
+		spritePivot2["x"] = 1;
+		spritePivot2["y"] = 0.5;
+	}
+	else if (spritePivot == "Bottom Left")
+	{
+		spritePivot2["x"] = 0;
+		spritePivot2["y"] = 0;
+	}
+	else if (spritePivot == "Bottom")
+	{
+		spritePivot2["x"] = 0.5;
+		spritePivot2["y"] = 0;
+	}
+	else if (spritePivot == "Bottom Right")
+	{
+		spritePivot2["x"] = 1;
+		spritePivot2["y"] = 0;
+	}
+	else 
+	{
+		spritePivot2["x"] = -1;
+		spritePivot2["y"] = -1;
+	}
     
     header["photoshopVersion"] = app.version;
     header["formatVersion"] = SPRITE_SHEET_3000_VERSION;
     header["exportFilterMode"] = filterMode;
 	header["exportImporterCompression"] = importerCompression;
 	header["exportPixelsPerUnit"] = pixelsPerUnit;
+	header["exportSpriteMeshType"] = spriteMeshType;
+	header["exportSpritePivot"] = spritePivot2;
 
     var frameIndex = 0;
     while (frameIndex < 1000)

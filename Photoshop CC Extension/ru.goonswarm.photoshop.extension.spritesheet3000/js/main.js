@@ -36,12 +36,24 @@
 				
 				var ddl_export_pixels_per_unit = document.getElementById("ddl_export_pixels_per_unit");
                 var ddl_export_pixels_per_unit_value = ddl_export_pixels_per_unit.value;
+				
+				var ddl_export_sprite_mesh_type = document.getElementById("ddl_export_sprite_mesh_type");
+                var ddl_export_sprite_mesh_type_index = ddl_export_sprite_mesh_type.selectedIndex;
+                var ddl_export_sprite_mesh_type_value = ddl_export_sprite_mesh_type.options[ddl_export_sprite_mesh_type_index].value;
+                var ddl_export_sprite_mesh_type_text = ddl_export_sprite_mesh_type.options[ddl_export_sprite_mesh_type_index].text;
+				
+				var ddl_export_sprite_pivot = document.getElementById("ddl_export_sprite_pivot");
+                var ddl_export_sprite_pivot_index = ddl_export_sprite_pivot.selectedIndex;
+                var ddl_export_sprite_pivot_value = ddl_export_sprite_pivot.options[ddl_export_sprite_pivot_index].value;
+                var ddl_export_sprite_pivot_text = ddl_export_sprite_pivot.options[ddl_export_sprite_pivot_index].text;
                 
                 var exportInfo = {}
                 exportInfo["imageFormat"] = ddl_export_image_format_text.toLowerCase();
                 exportInfo["filterMode"] = ddl_export_filter_mode_text;
 				exportInfo["importerCompression"] = ddl_export_importer_compression_text;
 				exportInfo["pixelsPerUnit"] = ddl_export_pixels_per_unit_value;
+				exportInfo["spriteMeshType"] = ddl_export_sprite_mesh_type_text;
+				exportInfo["spritePivot"] = ddl_export_sprite_pivot_text;
 				
                 var exportInfoJson = JSON.stringify(exportInfo).replace(/"/g,'\\"');
                 csInterface.evalScript('exportToJSON("' + exportInfoJson +'")', function(result) 

@@ -40,9 +40,35 @@
 				<option>CompressedLQ</option>
             </select>
         </div>
+		<br>
 		<div>
             <span>Pixels per Unit</span>
             <input id="ddl_export_pixels_per_unit" name="export_pixels_per_unit" type="number" min="1" max="1000" value="8"/>
+        </div>
+		<br>
+		<div>
+            <span>Sprite Mesh Type</span>
+            <select id="ddl_export_sprite_mesh_type" name="export_sprite_mesh_type">
+                <option>FullRect</option>
+                <option selected="selected">Tight</option>
+            </select>
+        </div>
+		<br>
+		<div>
+            <span>Sprite Pivot</span>
+            <select id="ddl_export_sprite_pivot" name="export_sprite_pivot">
+                <option>Center</option>
+                <option>Top Left</option>
+                <option>Top</option>
+				<option>Top Right</option>
+				<option>Top Left</option>
+                <option>Left</option>
+				<option>Right</option>
+				<option>Bottom Left</option>
+                <option selected="selected">Bottom</option>
+				<option>Bottom Right</option>
+				<option>Custom</option>
+            </select>
         </div>
         <br>
         <div>                
