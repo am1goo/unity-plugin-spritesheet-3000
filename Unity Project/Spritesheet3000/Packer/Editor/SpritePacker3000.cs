@@ -277,13 +277,17 @@ public class SpritePacker3000
 
         FilterMode? exportFilterMode = null;
         if (headerDict.ContainsKey("exportFilterMode"))
-            exportFilterMode = (FilterMode)Enum.Parse(typeof(FilterMode), (string)headerDict["exportFilterMode"]);
+            exportFilterMode = (FilterMode)Enum.Parse(typeof(FilterMode), headerDict["exportFilterMode"].ToString());
 
         TextureImporterCompression? exportImporterCompression = null;
         if (headerDict.ContainsKey("exportImporterCompression"))
-            exportImporterCompression = (TextureImporterCompression)Enum.Parse(typeof(TextureImporterCompression), (string)headerDict["exportImporterCompression"]);
+            exportImporterCompression = (TextureImporterCompression)Enum.Parse(typeof(TextureImporterCompression), headerDict["exportImporterCompression"].ToString());
 
-        SpriteHeaderInfo3000 header = new SpriteHeaderInfo3000(photoshopVersion, formatVersion, exportFilterMode, exportImporterCompression);
+        int? exportPixelsPerUnit = null;
+        if (headerDict.ContainsKey("exportPixelsPerUnit"))
+            exportPixelsPerUnit = int.Parse(headerDict["exportPixelsPerUnit"].ToString());
+
+        SpriteHeaderInfo3000 header = new SpriteHeaderInfo3000(photoshopVersion, formatVersion, exportFilterMode, exportImporterCompression, exportPixelsPerUnit);
 
         //parse frames
         List<SpriteAnimationInfo3000> frames = new List<SpriteAnimationInfo3000>();
@@ -328,7 +332,9 @@ public class SpritePacker3000
 
         FilterMode? exportFilterMode = clipInfo.header.exportFilterMode;
         TextureImporterCompression? exportImporterCompression = clipInfo.header.exportImporterCompression;
+        int? exportPixelsPerUnit = clipInfo.header.exportPixelsPerUnit;
         Debug.Log("[SpritePacker3000] Pack: trying to pack " + clipName + " " + clipInfo);
+
         SpriteAnimationClip3000 clip = CreateOrReplaceAsset(ScriptableObject.CreateInstance<SpriteAnimationClip3000>(), relativeFolder + "/" + clipName);
         clip.EditorRemoveSprites();
 
@@ -336,13 +342,62 @@ public class SpritePacker3000
         {
             SpriteAnimationInfo3000 frameInfo = clipInfo.frames[i];
             string spritePath = relativeFolder + "/" + frameInfo.filename;
+            bool saveAndReimport = false;
+            Texture2D tex = AssetDatabase.LoadAssetAtPath<Texture2D>(spritePath);
+            if (tex == null)
+            {
+                Debug.LogError("[SpritePacker3000] Pack: sprite not found at path " + spritePath);
+                continue;
+            }
+
+            string texPath = AssetDatabase.GetAssetPath(tex);
+            TextureImporter texImporter = AssetImporter.GetAtPath(texPath) as TextureImporter;
+
+            if (texImporter.textureType != TextureImporterType.Sprite)
+            {
+                texImporter.textureType = TextureImporterType.Sprite;
+                saveAndReimport = true;
+            }
+
+            if (exportFilterMode.HasValue)
+            {
+                if (texImporter.filterMode != exportFilterMode)
+                {
+                    texImporter.filterMode = exportFilterMode.Value;
+                    saveAndReimport = true;
+                }
+            }
+
+            if (exportImporterCompression.HasValue)
+            {
+                if (texImporter.textureCompression != exportImporterCompression)
+                {
+                    texImporter.textureCompression = exportImporterCompression.Value;
+                    saveAndReimport = true;
+                }
+            }
+
+            if (exportPixelsPerUnit.HasValue)
+            {
+                if (texImporter.spritePixelsPerUnit != exportPixelsPerUnit)
+                {
+                    texImporter.spritePixelsPerUnit = exportPixelsPerUnit.Value;
+                    saveAndReimport = true;
+                }
+            }
+
+            if (saveAndReimport)
+                texImporter.SaveAndReimport();
+
+
             Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
             if (sprite == null)
             {
                 Debug.LogError("[SpritePacker3000] Pack: sprite not found at path " + spritePath);
                 continue;
             }
-            clip.EditorAddSprite(sprite, frameInfo.playbackTime, exportFilterMode, exportImporterCompression);
+
+            clip.EditorAddSprite(sprite, frameInfo.playbackTime);
         }
 
         EditorUtility.SetDirty(clip);

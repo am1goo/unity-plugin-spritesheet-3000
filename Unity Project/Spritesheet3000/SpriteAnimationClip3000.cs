@@ -108,7 +108,7 @@ public class SpriteAnimationClip3000 : ScriptableObject
 #if UNITY_EDITOR
     public static readonly string[] EDITOR_EMPTY_CLIP_OPTIONS = new string[0];
 
-    public void EditorAddSprite(Sprite origin, float playbackTime, FilterMode? exportFilterMode, TextureImporterCompression? exportImporterCompression)
+    public void EditorAddSprite(Sprite origin, float playbackTime)
     {
         if (origin == null) return;
 
@@ -118,31 +118,6 @@ public class SpriteAnimationClip3000 : ScriptableObject
         {
             Sprite assetSprite = Instantiate(origin);
             assetSprite.name = spriteName;
-
-            string texPath = AssetDatabase.GetAssetPath(assetSprite.texture);
-            TextureImporter texImporter = AssetImporter.GetAtPath(texPath) as TextureImporter;
-
-            bool saveAndReimport = false;
-            if (exportFilterMode.HasValue)
-            {
-                if (texImporter.filterMode != exportFilterMode)
-                {
-                    texImporter.filterMode = exportFilterMode.Value;
-                    saveAndReimport = true;
-                }
-            }
-
-            if (exportImporterCompression.HasValue)
-            {
-                if (texImporter.textureCompression != exportImporterCompression)
-                {
-                    texImporter.textureCompression = exportImporterCompression.Value;
-                    saveAndReimport = true;
-                }
-            }
-
-            if (saveAndReimport)
-                texImporter.SaveAndReimport();
 
             AssetDatabase.AddObjectToAsset(assetSprite, this);
             m_spritesName.Add(spriteName);

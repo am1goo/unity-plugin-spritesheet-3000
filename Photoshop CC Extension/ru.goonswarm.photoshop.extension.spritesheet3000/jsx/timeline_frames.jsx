@@ -1,6 +1,6 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
 /*global $, Folder*/
-var SPRITE_SHEET_3000_VERSION = 2;
+var SPRITE_SHEET_3000_VERSION = 3;
 var KEY_PREVIOUS_DEST_FOLDER = "spritesheet3000_key_previous_dest_folder";
 
 function exportToJSON(exportInfoJson)
@@ -17,6 +17,7 @@ function exportToJSON(exportInfoJson)
     var imageFormat = exportInfo.imageFormat;
     var filterMode = exportInfo.filterMode;
 	var importerCompression = exportInfo.importerCompression;
+	var pixelsPerUnit = exportInfo.pixelsPerUnit;
 	
     var tempFolderName = getTempOptions(KEY_PREVIOUS_DEST_FOLDER, "C:\\");
 
@@ -55,6 +56,7 @@ function exportToJSON(exportInfoJson)
     header["formatVersion"] = SPRITE_SHEET_3000_VERSION;
     header["exportFilterMode"] = filterMode;
 	header["exportImporterCompression"] = importerCompression;
+	header["exportPixelsPerUnit"] = pixelsPerUnit;
 
     var frameIndex = 0;
     while (frameIndex < 1000)

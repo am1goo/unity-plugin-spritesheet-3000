@@ -33,12 +33,16 @@
                 var ddl_export_importer_compression_index = ddl_export_importer_compression.selectedIndex;
                 var ddl_export_importer_compression_value = ddl_export_importer_compression.options[ddl_export_importer_compression_index].value;
                 var ddl_export_importer_compression_text = ddl_export_importer_compression.options[ddl_export_importer_compression_index].text;
+				
+				var ddl_export_pixels_per_unit = document.getElementById("ddl_export_pixels_per_unit");
+                var ddl_export_pixels_per_unit_value = ddl_export_pixels_per_unit.value;
                 
                 var exportInfo = {}
                 exportInfo["imageFormat"] = ddl_export_image_format_text.toLowerCase();
                 exportInfo["filterMode"] = ddl_export_filter_mode_text;
 				exportInfo["importerCompression"] = ddl_export_importer_compression_text;
-                
+				exportInfo["pixelsPerUnit"] = ddl_export_pixels_per_unit_value;
+				
                 var exportInfoJson = JSON.stringify(exportInfo).replace(/"/g,'\\"');
                 csInterface.evalScript('exportToJSON("' + exportInfoJson +'")', function(result) 
                 {
