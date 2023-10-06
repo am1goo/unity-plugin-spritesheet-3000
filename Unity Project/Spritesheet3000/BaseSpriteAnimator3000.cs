@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour, ISpriteAnimator3000
+public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour
 {
     [SerializeField] private T m_renderer;
     [SerializeField] private List<T> m_copyRenderers;
@@ -25,7 +25,11 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour, ISpriteAnimator
     public bool flipX
     {
         get { return m_flip_x; }
-        set { m_flip_x = value; ChangeFlip(m_flip_x, m_flip_y); }
+        set
+        {
+            m_flip_x = value;
+            ChangeFlip(m_flip_x, m_flip_y);
+        }
     }
 
     [SerializeField] [HideInInspector]
@@ -33,7 +37,11 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour, ISpriteAnimator
     public bool flipY
     {
         get { return m_flip_y; }
-        set { m_flip_y = value; ChangeFlip(m_flip_x, m_flip_y); }
+        set
+        {
+            m_flip_y = value;
+            ChangeFlip(m_flip_x, m_flip_y);
+        }
     }
 
     public bool playInEditor { get; set; }
@@ -58,11 +66,6 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour, ISpriteAnimator
         timer.Invoke();
     }
 
-    protected virtual void OnAnimationUpdate(T renderer)
-    {
-        //do nothing
-    }
-
     private void Update()
     {
         isAnimated = true;
@@ -72,13 +75,13 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour, ISpriteAnimator
         float time = timer.GetTimeByThread(timeThread);
 
         Animation(clip, time - lastTime);
-        OnAnimationUpdate(m_renderer);
     }
 
     private void Animation(SpriteAnimationClip3000 clip, float deltaTime)
     {
         float dt = deltaTime;
-        if (dt < 0) return;
+        if (dt < 0)
+            return;
 
         Sprite sprite = SampleByNormalizedTime(clip, normalizedTime);
         ChangeSprite(sprite);
@@ -94,20 +97,25 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour, ISpriteAnimator
 
     public Sprite SampleByFrameIndex(SpriteAnimationClip3000 clip, int frameIndex)
     {
-        if (clip == null) return null;
+        if (clip == null)
+            return null;
         return clip.SampleByFrameIndex(frameIndex);
     }
 
     public Sprite SampleByNormalizedTime(SpriteAnimationClip3000 clip, float normalizedTime)
     {
-        if (clip == null) return null;
+        if (clip == null)
+            return null;
         return clip.SampleByNormalizedTime(normalizedTime);
     }
 
     private SpriteAnimationClip3000 GetClipInternal(int clipIndex)
     {
-        if (m_spritesheets == null || m_spritesheets.Count == 0) return null;
-        if (clipIndex < 0 || clipIndex >= m_spritesheets.Count) return null;
+        if (m_spritesheets == null || m_spritesheets.Count == 0)
+            return null;
+
+        if (clipIndex < 0 || clipIndex >= m_spritesheets.Count)
+            return null;
 
         return m_spritesheets[clipIndex];
     }
@@ -138,7 +146,8 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour, ISpriteAnimator
             clip.RemoveEvent();
 
         int idx = GetClipIndex(clipName);
-        if (idx == -1) return false;
+        if (idx == -1)
+            return false;
 
         clipIndex = idx;
         clipTime = 0;
@@ -148,13 +157,11 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour, ISpriteAnimator
     public bool Play(string clipName, Action callback = null)
     {
         bool res = ChangeClipIndex(clipName);
-        if (!res) return false;
+        if (!res)
+            return false;
 
         if (!isAnimated)
-        {
             Animation(clip, 0);
-            OnAnimationUpdate(m_renderer);
-        }
 
         clip.AddEvent(callback);
         return true;
@@ -181,7 +188,8 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour, ISpriteAnimator
     public SpriteAnimationClip3000 GetClip(string clipName)
     {
         var idx = GetClipIndex(clipName);
-        if (idx == -1) return null;
+        if (idx == -1)
+            return null;
 
         return m_spritesheets[idx];
     }
@@ -189,15 +197,19 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour, ISpriteAnimator
     public float GetClipLength(string clipName)
     {
         var res = GetClip(clipName);
-        if (res == null) return 0;
+        if (res == null)
+            return 0;
 
         return res.GetLength(totalTimeScale);
     }
 
     public bool GetClips(ref List<SpriteAnimationClip3000> result)
     {
-        if (result == null) return false;
-        if (m_spritesheets == null) return false;
+        if (result == null)
+            return false;
+
+        if (m_spritesheets == null)
+            return false;
 
         for (int i = 0; i < m_spritesheets.Count; ++i)
         {
@@ -216,7 +228,6 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour, ISpriteAnimator
             {
                 float deltaTime = Time.realtimeSinceStartup - lastRealtimeSinceStartup;
                 Animation(clip, deltaTime);
-                OnAnimationUpdate(m_renderer);
                 lastRealtimeSinceStartup = Time.realtimeSinceStartup;
             }
         }

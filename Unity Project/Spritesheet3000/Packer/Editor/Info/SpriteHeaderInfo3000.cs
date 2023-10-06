@@ -7,37 +7,42 @@ public class SpriteHeaderInfo3000
 {
     public string photoshopVersion;
     public int formatVersion;
-    public FilterMode? exportFilterMode;
-    public TextureImporterCompression? exportImporterCompression;
-    public int? exportPixelsPerUnit;
-    public SpriteMeshType? exportSpriteMeshType;
-    public int? exportSpriteAlignment;
-    public Vector2? exportSpritePivot;
+    public ExportOptions exportOptions;
 
     public SpriteHeaderInfo3000() { }
 
-    public SpriteHeaderInfo3000(string photoshopVersion, int formatVersion, FilterMode? exportFilterMode, TextureImporterCompression? exportImporterCompression, int? exportPixelsPerUnit, SpriteMeshType? exportSpriteMeshType, int? exportSpriteAlignment, Vector2? exportSpritePivot)
+    public SpriteHeaderInfo3000(string photoshopVersion, int formatVersion, ExportOptions exportOptions)
     {
         this.photoshopVersion = photoshopVersion;
         this.formatVersion = formatVersion;
-        this.exportFilterMode = exportFilterMode;
-        this.exportImporterCompression = exportImporterCompression;
-        this.exportPixelsPerUnit = exportPixelsPerUnit;
-        this.exportSpriteMeshType = exportSpriteMeshType;
-        this.exportSpriteAlignment = exportSpriteAlignment;
-        this.exportSpritePivot = exportSpritePivot;
+        this.exportOptions = exportOptions;
     }
 
     public override string ToString()
     {
         return "[photoshopVersion=" + photoshopVersion + 
             ", formatVersion=" + formatVersion +
-            ", exportFilterMode=" + exportFilterMode +
-            ", exportImporterCompression=" + exportImporterCompression +
-            ", exportPixelsPerUnit=" + exportPixelsPerUnit +
-            ", exportSpriteMeshType=" + exportSpriteMeshType +
-            ", exportSpriteAlignment=" + exportSpriteAlignment +
-            ", exportSpritePivot=" + exportSpritePivot +
+            ", exportOptions=" + exportOptions +
             "]";
+    }
+
+    [SerializeField]
+    public struct ExportOptions
+    {
+        public FilterMode? filterMode;
+        public TextureImporterCompression? importerCompression;
+        public TextureWrapMode? wrapMode;
+        public bool? mipmapsEnabled;
+        public bool? alphaIsTransparency;
+
+        public override string ToString()
+        {
+            return "[filterMode=" + filterMode +
+            ", importerCompression=" + importerCompression +
+            ", wrapMode=" + wrapMode +
+            ", mipmapsEnabled=" + mipmapsEnabled +
+            ", alphaIsTransparency=" + alphaIsTransparency +
+            "]";
+        }
     }
 }

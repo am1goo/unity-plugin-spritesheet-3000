@@ -8,11 +8,21 @@ public class SpriteAnimationClip3000Inspector : Editor
     private void OnEnable()
     {
         clip = target as SpriteAnimationClip3000;
+
+        OnPlayModeStateChanged(PlayModeStateChange.EnteredEditMode);
+        EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
     }
 
     private void OnDisable()
     {
         clip = null;
+
+        EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+    }
+
+    private void OnPlayModeStateChanged(PlayModeStateChange change)
+    {
+        clip.EditorRefresh();
     }
 
     public override void OnInspectorGUI()
