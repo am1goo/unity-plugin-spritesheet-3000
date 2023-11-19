@@ -5,132 +5,134 @@ using System;
 using UnityEditor;
 #endif
 
-public class SpriteAnimationClip3000 : ScriptableObject
+namespace Spritesheet3000
 {
-    [SerializeField] private Texture2D m_texture;
-    [SerializeField] [HideInInspector] private Vector2Int m_entrySize;
-    [SerializeField] [HideInInspector] private float m_length;
-    [SerializeField] [HideInInspector] private List<string> m_spritesName = new List<string>();
-    [SerializeField] [HideInInspector] private List<SpriteAnimationParameter3000> m_spritesParameters = new List<SpriteAnimationParameter3000>();
-    [SerializeField] [HideInInspector] private List<SpriteAnimationFrameRange3000> m_framesRange = new List<SpriteAnimationFrameRange3000>();
-    [SerializeField] [HideInInspector] private List<SpriteAnimationFrame3000> m_frames = new List<SpriteAnimationFrame3000>();
-
-    private List<Sprite> m_sprites = null;
-
-    private void OnEnable()
+    public class SpriteAnimationClip3000 : ScriptableObject
     {
-        m_sprites = null;
-    }
+        [SerializeField] private Texture2D m_texture;
+        [SerializeField] [HideInInspector] private Vector2Int m_entrySize;
+        [SerializeField] [HideInInspector] private float m_length;
+        [SerializeField] [HideInInspector] private List<string> m_spritesName = new List<string>();
+        [SerializeField] [HideInInspector] private List<SpriteAnimationParameter3000> m_spritesParameters = new List<SpriteAnimationParameter3000>();
+        [SerializeField] [HideInInspector] private List<SpriteAnimationFrameRange3000> m_framesRange = new List<SpriteAnimationFrameRange3000>();
+        [SerializeField] [HideInInspector] private List<SpriteAnimationFrame3000> m_frames = new List<SpriteAnimationFrame3000>();
 
-    public int framesCount { get { return m_frames.Count; } }
-    public float length { get { return m_length; } }
-    public float GetLength(float timeScale)
-    {
-        return length / timeScale;
-    }
+        private List<Sprite> m_sprites = null;
 
-    public Sprite SampleByFrameIndex(int frameIndex)
-    {
-        return GetFrameSprite(frameIndex);
-    }
-
-    public Sprite SampleByNormalizedTime(float normalizedTime)
-    {
-        float time = Mathf.Clamp01(normalizedTime) * m_length;
-        return SampleByTime(time);
-    }
-
-    public int GetFrameIndexByNormalizedTime(float normalizedTime)
-    {
-        float time = Mathf.Clamp01(normalizedTime) * m_length;
-        return GetFrameIndexByTime(time);
-    }
-
-    public int GetFrameIndexByTime(float time)
-    {
-        time = Mathf.Clamp(time, 0, m_length);
-
-        if (m_framesRange.Count == 0)
-            return -1;
-
-        if (m_framesRange.Count == 1)
-            return 0;
-
-        for (int i = 0; i < m_framesRange.Count; ++i)
+        private void OnEnable()
         {
-            if (m_framesRange[i].Inside(time))
+            m_sprites = null;
+        }
+
+        public int framesCount { get { return m_frames.Count; } }
+        public float length { get { return m_length; } }
+        public float GetLength(float timeScale)
+        {
+            return length / timeScale;
+        }
+
+        public Sprite SampleByFrameIndex(int frameIndex)
+        {
+            return GetFrameSprite(frameIndex);
+        }
+
+        public Sprite SampleByNormalizedTime(float normalizedTime)
+        {
+            float time = Mathf.Clamp01(normalizedTime) * m_length;
+            return SampleByTime(time);
+        }
+
+        public int GetFrameIndexByNormalizedTime(float normalizedTime)
+        {
+            float time = Mathf.Clamp01(normalizedTime) * m_length;
+            return GetFrameIndexByTime(time);
+        }
+
+        public int GetFrameIndexByTime(float time)
+        {
+            time = Mathf.Clamp(time, 0, m_length);
+
+            if (m_framesRange.Count == 0)
+                return -1;
+
+            if (m_framesRange.Count == 1)
+                return 0;
+
+            for (int i = 0; i < m_framesRange.Count; ++i)
             {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public Sprite SampleByTime(float time)
-    {
-        int frameIdx = GetFrameIndexByTime(time);
-        if (frameIdx >= 0)
-        {
-            return GetFrameSprite(frameIdx);
-        }
-        else
-        {
-            return GetFrameSprite(m_frames.Count - 1);
-        }
-    }
-
-    public Sprite GetFrameSprite(int frameIdx)
-    {
-        if (frameIdx < 0 || frameIdx >= m_frames.Count)
-            return null;
-        return GetFrameSprite(m_frames[frameIdx].spriteName);
-    }
-
-    public Sprite GetFrameSprite(string spriteName)
-    {
-        var spriteIdx = GetSpriteIndex(spriteName);
-        if (spriteIdx == -1)
-            return null;
-
-        if (m_sprites == null)
-        {
-            m_sprites = new List<Sprite>();
-
-            var atlasSize = new Vector2Int(m_texture.width, m_texture.height);
-            var entrySize = new Vector2Int(m_entrySize.x, m_entrySize.y);
-            var count = new Vector2Int(atlasSize.x / entrySize.x, atlasSize.y / entrySize.y);
-
-            for (int i = 0; i < m_spritesName.Count; ++i)
-            {
-                var name = m_spritesName[i];
-
-                int x = i % count.x;
-                int y = i / count.x;
-
-                Vector2 pos = new Vector2(x * entrySize.x, (count.y - y - 1) * entrySize.y);
-                Vector2 size = new Vector2(entrySize.x, entrySize.y);
-                var rect = new Rect(pos, size);
-                var pivotInPixels = m_spritesParameters[spriteIdx].pivotInPixels;
-                var pivot = new Vector2
+                if (m_framesRange[i].Inside(time))
                 {
-                    x = pivotInPixels.x / size.x,
-                    y = pivotInPixels.y / size.y,
-                };
+                    return i;
+                }
+            }
+            return -1;
+        }
 
-                var sprite = Sprite.Create(m_texture, rect, pivot, pixelsPerUnit: 50, extrude: 0, meshType: SpriteMeshType.FullRect, border: Vector4.zero, generateFallbackPhysicsShape: false);
-                sprite.name = name;
-
-                m_sprites.Add(sprite);
+        public Sprite SampleByTime(float time)
+        {
+            int frameIdx = GetFrameIndexByTime(time);
+            if (frameIdx >= 0)
+            {
+                return GetFrameSprite(frameIdx);
+            }
+            else
+            {
+                return GetFrameSprite(m_frames.Count - 1);
             }
         }
 
-        return m_sprites[spriteIdx];
-    }
+        public Sprite GetFrameSprite(int frameIdx)
+        {
+            if (frameIdx < 0 || frameIdx >= m_frames.Count)
+                return null;
+            return GetFrameSprite(m_frames[frameIdx].spriteName);
+        }
 
-    public int GetSpriteIndex(string spriteName)
-    {
-        return m_spritesName.IndexOf(spriteName);
-    }
+        public Sprite GetFrameSprite(string spriteName)
+        {
+            var spriteIdx = GetSpriteIndex(spriteName);
+            if (spriteIdx == -1)
+                return null;
+
+            if (m_sprites == null)
+            {
+                m_sprites = new List<Sprite>();
+
+                var atlasSize = new Vector2Int(m_texture.width, m_texture.height);
+                var entrySize = new Vector2Int(m_entrySize.x, m_entrySize.y);
+                var count = new Vector2Int(atlasSize.x / entrySize.x, atlasSize.y / entrySize.y);
+
+                for (int i = 0; i < m_spritesName.Count; ++i)
+                {
+                    var name = m_spritesName[i];
+
+                    int x = i % count.x;
+                    int y = i / count.x;
+
+                    Vector2 pos = new Vector2(x * entrySize.x, (count.y - y - 1) * entrySize.y);
+                    Vector2 size = new Vector2(entrySize.x, entrySize.y);
+                    var rect = new Rect(pos, size);
+                    var pivotInPixels = m_spritesParameters[spriteIdx].pivotInPixels;
+                    var pivot = new Vector2
+                    {
+                        x = pivotInPixels.x / size.x,
+                        y = pivotInPixels.y / size.y,
+                    };
+
+                    var sprite = Sprite.Create(m_texture, rect, pivot, pixelsPerUnit: 50, extrude: 0, meshType: SpriteMeshType.FullRect, border: Vector4.zero, generateFallbackPhysicsShape: false);
+                    sprite.name = name;
+
+                    m_sprites.Add(sprite);
+                }
+            }
+
+            return m_sprites[spriteIdx];
+        }
+
+        public int GetSpriteIndex(string spriteName)
+        {
+            return m_spritesName.IndexOf(spriteName);
+        }
 
 #if UNITY_EDITOR
     public static readonly string[] EDITOR_EMPTY_CLIP_OPTIONS = new string[0];
@@ -396,4 +398,5 @@ public class SpriteAnimationClip3000 : ScriptableObject
         }
     }
 #endif
+    }
 }
