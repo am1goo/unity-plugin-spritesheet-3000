@@ -5,8 +5,8 @@ Custom pipeline plugin about how to make work together Adobe Photoshop's files w
 </p>
 
 #### Unity Plugin
-The latest version can be installed via package manager using following git URL: \
-**https://github.com/am1goo/unity-plugin-spritesheet-3000.git**
+The latest version can be installed via [package manager](https://docs.unity3d.com/Manual/upm-ui-giturl.html) using following git URL: \
+```https://github.com/am1goo/unity-plugin-spritesheet-3000.git```
 
 ## Getting started
 #### Photoshop CC Extension
