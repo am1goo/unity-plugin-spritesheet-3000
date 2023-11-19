@@ -15,7 +15,7 @@ Window -> Extensions -> Spritesheet 3000 Exporter
 
 #### Unity Plugin
 The latest version can be installed via package manager using following git URL: \
-**https://github.com/am1goo/unity-plugin-spritesheet-3000.git#upm**
+**https://github.com/am1goo/unity-plugin-spritesheet-3000.git**
 
 ## Using in
 - **Sin Slayers** - RPG with roguelike elements set in a dark fantasy world, where your choices determine how challenging the fights and enemies will be.
