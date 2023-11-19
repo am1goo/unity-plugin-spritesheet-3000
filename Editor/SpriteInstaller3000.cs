@@ -17,7 +17,6 @@ namespace Spritesheet3000.Editor
         private static void InstallAdobePhotoshopCC()
         {
             var pathToFolder = Path.GetFullPath($"Packages/{PACKAGE_NAME}/Editor/AdobePhotoshop/CC");
-            pathToFolder = @"C:\prototypes\Installer\Assets\Editor\AdobePhotoshop\CC";
             var src = new DirectoryInfo(pathToFolder);
 
             var installReg = new FileInfo(Path.Combine(src.FullName, "install.reg"));
