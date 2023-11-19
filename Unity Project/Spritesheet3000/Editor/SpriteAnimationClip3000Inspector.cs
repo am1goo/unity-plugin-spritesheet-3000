@@ -15,9 +15,8 @@ public class SpriteAnimationClip3000Inspector : Editor
 
     private void OnDisable()
     {
-        clip = null;
-
         EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+        clip = null;
     }
 
     private void OnPlayModeStateChanged(PlayModeStateChange change)
@@ -31,8 +30,8 @@ public class SpriteAnimationClip3000Inspector : Editor
 
         if (clip != null)
         {
-            EditorGUILayout.LabelField("Frames: " + clip.framesCount);
-            EditorGUILayout.LabelField("Length: " + clip.length + " (ms)");
+            EditorGUILayout.LabelField($"Frames: {clip.framesCount}");
+            EditorGUILayout.LabelField($"Length: {clip.length}(ms)");
         }
     }
 }

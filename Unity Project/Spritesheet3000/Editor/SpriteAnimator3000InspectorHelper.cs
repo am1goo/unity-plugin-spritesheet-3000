@@ -17,13 +17,14 @@ public static class SpriteAnimator3000InspectorHelper
         anim.playInEditor = EditorGUILayout.ToggleLeft("Play in Editor", anim.playInEditor);
         anim.flipX = EditorGUILayout.ToggleLeft("Flip X", anim.flipX);
         anim.flipY = EditorGUILayout.ToggleLeft("Flip Y", anim.flipY);
-        anim.clipIndex = EditorGUILayout.Popup("Clip", anim.clipIndex, currentClipOptions);
+        anim.editorIndex = EditorGUILayout.Popup("Clip", anim.editorIndex, currentClipOptions);
 
         if (!Application.isPlaying)
         {
             if (GUI.changed)
             {
-                bool isPrefab = PrefabUtility.GetPrefabType(target) != PrefabType.None;
+                var prefabType = PrefabUtility.GetPrefabAssetType(target);
+                var isPrefab = prefabType != PrefabAssetType.NotAPrefab;
                 if (isPrefab)
                     EditorUtility.SetDirty(target);
                 else

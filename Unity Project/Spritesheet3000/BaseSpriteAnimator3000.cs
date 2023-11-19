@@ -47,12 +47,17 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour
     public bool playInEditor { get; set; }
 
     public float clipTime { get; private set; }
-    public int clipIndex { get { return clipIdx; } set { clipIdx = value; } }
+    public int clipIndex { get { return clipIdx; } }
     public SpriteAnimationClip3000 clip { get { return GetClipInternal(clipIndex); } }
-    public float clipLength { get { return clip != null ? clip.GetLength(totalTimeScale) : 0; } }
+    public string clipName { get { return clip?.name; } }
+    public float clipLength { get { return clip?.GetLength(totalTimeScale) ?? 0; } }
     public float normalizedTime { get { return clipTime / clipLength; } }
+#if UNITY_EDITOR
+    public int editorIndex { get { return clipIdx; } set { clipIdx = value; } }
+#endif
 
     private SpriteAnimatorTimer3000 timer = new SpriteAnimatorTimer3000();
+    private Action callback = null;
 
     private bool isAnimated = false;
     private void Awake()
@@ -90,8 +95,11 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour
         if (clipTime >= clipLength)
         {
             clipTime = 0;
-            if (clip != null)
-                clip.InvokeEvent();
+            if (callback != null)
+            {
+                callback();
+                callback = null;
+            }
         }
     }
 
@@ -142,16 +150,35 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour
 
     private bool ChangeClipIndex(string clipName)
     {
-        if (clip != null)
-            clip.RemoveEvent();
+        if (callback != null)
+        {
+            //do nothing
+            callback = null;
+        }
 
         int idx = GetClipIndex(clipName);
         if (idx == -1)
             return false;
 
-        clipIndex = idx;
+        clipIdx = idx;
         clipTime = 0;
         return true;
+    }
+
+    public bool Play(SpriteAnimationClip3000 clip, Action callback = null)
+    {
+        if (clip == null)
+            return false;
+
+        if (!m_spritesheets.Contains(clip))
+        {
+            m_spritesheets.Add(clip);
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
+        }
+
+        return Play(clip.name, callback);
     }
 
     public bool Play(string clipName, Action callback = null)
@@ -163,7 +190,7 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour
         if (!isAnimated)
             Animation(clip, 0);
 
-        clip.AddEvent(callback);
+        this.callback = callback;
         return true;
     }
 
@@ -259,6 +286,14 @@ public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour
             }
         }
         return clipIndexes.ToArray();
+    }
+    
+    public void EditorRefresh()
+    {
+        foreach (var clip in m_spritesheets)
+        {
+            clip.EditorRefresh();
+        }
     }
 #endif
 }

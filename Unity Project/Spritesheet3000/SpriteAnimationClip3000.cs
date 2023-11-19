@@ -11,6 +11,7 @@ public class SpriteAnimationClip3000 : ScriptableObject
     [SerializeField] [HideInInspector] private Vector2Int m_entrySize;
     [SerializeField] [HideInInspector] private float m_length;
     [SerializeField] [HideInInspector] private List<string> m_spritesName = new List<string>();
+    [SerializeField] [HideInInspector] private List<SpriteAnimationParameter3000> m_spritesParameters = new List<SpriteAnimationParameter3000>();
     [SerializeField] [HideInInspector] private List<SpriteAnimationFrameRange3000> m_framesRange = new List<SpriteAnimationFrameRange3000>();
     [SerializeField] [HideInInspector] private List<SpriteAnimationFrame3000> m_frames = new List<SpriteAnimationFrame3000>();
 
@@ -27,8 +28,6 @@ public class SpriteAnimationClip3000 : ScriptableObject
     {
         return length / timeScale;
     }
-
-    private Action callback = null;
 
     public Sprite SampleByFrameIndex(int frameIndex)
     {
@@ -111,9 +110,14 @@ public class SpriteAnimationClip3000 : ScriptableObject
                 Vector2 pos = new Vector2(x * entrySize.x, (count.y - y - 1) * entrySize.y);
                 Vector2 size = new Vector2(entrySize.x, entrySize.y);
                 var rect = new Rect(pos, size);
-                var pivot = 0.5f * Vector2.one;
+                var pivotInPixels = m_spritesParameters[spriteIdx].pivotInPixels;
+                var pivot = new Vector2
+                {
+                    x = pivotInPixels.x / size.x,
+                    y = pivotInPixels.y / size.y,
+                };
 
-                var sprite = Sprite.Create(m_texture, rect, pivot, pixelsPerUnit: 100, extrude: 0, meshType: SpriteMeshType.FullRect, border: Vector4.zero, generateFallbackPhysicsShape: false);
+                var sprite = Sprite.Create(m_texture, rect, pivot, pixelsPerUnit: 50, extrude: 0, meshType: SpriteMeshType.FullRect, border: Vector4.zero, generateFallbackPhysicsShape: false);
                 sprite.name = name;
 
                 m_sprites.Add(sprite);
@@ -126,25 +130,6 @@ public class SpriteAnimationClip3000 : ScriptableObject
     public int GetSpriteIndex(string spriteName)
     {
         return m_spritesName.IndexOf(spriteName);
-    }
-
-    public void AddEvent(Action callback)
-    {
-        this.callback = callback;
-    }
-
-    public void InvokeEvent()
-    {
-        if (callback != null)
-        {
-            callback();
-            callback = null;
-        }
-    }
-
-    public void RemoveEvent()
-    {
-        this.callback = null;
     }
 
 #if UNITY_EDITOR
@@ -213,6 +198,7 @@ public class SpriteAnimationClip3000 : ScriptableObject
             var entry = new EditorAtlasEntry(origin);
             m_atlasEntries.Add(entry);
             m_spritesName.Add(spriteName);
+            m_spritesParameters.Add(new SpriteAnimationParameter3000(origin.pivot));
         }
         else
         {
@@ -227,10 +213,12 @@ public class SpriteAnimationClip3000 : ScriptableObject
     public void EditorFinishAtlas(ExportWorker exportWorker)
     {
         var entriesCount = m_atlasEntries.Count;
+        var entryExample = m_atlasEntries[0];
+        var entrySize = new Vector2Int(Mathf.NextPowerOfTwo(entryExample.size.x), Mathf.NextPowerOfTwo(entryExample.size.y));
+
         var side = Mathf.CeilToInt(Mathf.Sqrt(entriesCount));
         var sidePoT = Mathf.NextPowerOfTwo(side);
 
-        var entrySize = new Vector2Int(256, 256);
         var atlasWidth = entrySize.x * sidePoT;
         var atlasHeight = entrySize.y * Mathf.CeilToInt(entriesCount / (float)sidePoT);
         var atlasSize = new Vector2Int(atlasWidth, atlasHeight);

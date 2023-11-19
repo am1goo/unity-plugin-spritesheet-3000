@@ -12,6 +12,7 @@ public class SpriteAnimator3000Inspector : Editor
     private void OnEnable()
     {
         anim = target as SpriteAnimator3000;
+        anim.EditorRefresh();
         currentTime = 0;
         currentClipOptions = anim.EditorCreateClipsOptions();
 

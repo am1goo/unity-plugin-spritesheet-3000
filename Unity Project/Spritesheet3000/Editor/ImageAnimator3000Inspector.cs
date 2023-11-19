@@ -12,6 +12,7 @@ public class ImageAnimator3000Inspector : Editor
     private void OnEnable()
     {
         anim = target as ImageAnimator3000;
+        anim.EditorRefresh();
         currentTime = 0;
         currentClipOptions = anim.EditorCreateClipsOptions();
 
