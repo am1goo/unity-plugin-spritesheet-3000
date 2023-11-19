@@ -9,13 +9,15 @@ The latest version can be installed via [package manager](https://docs.unity3d.c
 ```https://github.com/am1goo/unity-plugin-spritesheet-3000.git```
 
 ## Getting started
-#### Photoshop CC Extension
-- **Execute install.reg** - don't do anything when change occurs
-- **Copy ru.goonswarm.photoshop.extension.spritesheet3000 folder into:** \
-	x86 => c:\\Program Files (x86)\\Common Files\\Adobe\\CEP\\extensions\\ \
-	x64 => c:\\Program Files\\Common Files\\Adobe\\CEP\\extensions\\
-- **Open Photoshop CC and run extension**\
-Window -> Extensions -> Spritesheet 3000 Exporter
+#### Adobe Photoshop CC Extension
+- **Install extentions via Unity Editor menu**\
+```Spritesheet 3000 -> Install extensions -> Adobe Photoshop CC```
+<p align="center">
+  <img src="Readme/install-photoshop-extension.png" alt="install-photoshop-extension"/>
+</p>
+
+- **Open extension via Adoby Photoshop CC**\
+```Window -> Extensions -> Spritesheet 3000 Exporter```
 
 ## Tested in
 - **Unity 2019.4.x**
