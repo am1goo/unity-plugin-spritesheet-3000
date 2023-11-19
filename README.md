@@ -1,5 +1,8 @@
 # Spritesheet 3000
 Custom pipeline plugin about how to make work together Adobe Photoshop's files with UnityEngine's sprites
+<p align="center">
+  <img src="Readme/header-image.png" alt="header-image"/>
+</p>
 
 ## Getting started
 #### Photoshop CC Extension
