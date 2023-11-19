@@ -8,17 +8,19 @@ namespace Spritesheet3000.Editor
 {
     public class SpriteInstaller3000
     {
-        private const string PACKAGE_NAME = "Spritesheet 3000";
-        private const string MENU_ITEM_ROOT = PACKAGE_NAME;
+        private const string PACKAGE_NAME = "com.am1goo.spritesheet3000";
+        private const string PACKAGE_DISPLAY_NAME = "Spritesheet 3000";
+        private const string MENU_ITEM_ROOT = PACKAGE_DISPLAY_NAME;
 
         private static readonly string DoubleLine = $"{Environment.NewLine}{Environment.NewLine}";
 
         [MenuItem(MENU_ITEM_ROOT + "/Install Extensions/Adobe Photoshop CC")]
         private static void InstallAdobePhotoshopCC()
         {
-            var pathToFolder = Path.GetFullPath($"Packages/{PACKAGE_NAME}/Editor/AdobePhotoshop/CC");
-            var src = new DirectoryInfo(pathToFolder);
+            var pathToPackage = ResolvePackagePath(PACKAGE_NAME);
+            var pathToFolder = Path.Combine(pathToPackage, "Editor/AdobePhotoshop/CC");
 
+            var src = new DirectoryInfo(pathToFolder);
             var installReg = new FileInfo(Path.Combine(src.FullName, "install.reg"));
 
             var extensionsFolder = @"Common Files\Adobe\CEP\extensions";
@@ -72,6 +74,28 @@ namespace Spritesheet3000.Editor
 
             Debug.Log($"SpriteInstaller3000: {log}");
             EditorUtility.DisplayDialog("Installer", log, "Okay");
+        }
+
+        private static string ResolvePackagePath(string packageName)
+        {
+            var req = UnityEditor.PackageManager.Client.List();
+            while (!req.IsCompleted)
+            {
+                System.Threading.Thread.Sleep(10);
+            }
+
+            var found = default(UnityEditor.PackageManager.PackageInfo);
+            var collection = req.Result;
+            foreach (var package in collection)
+            {
+                if (package.name != packageName)
+                    continue;
+
+                found = package;
+                break;
+            }
+
+            return found.resolvedPath;
         }
 
         private class OnlyIfError : Installer.ITask
