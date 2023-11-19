@@ -6,15 +6,18 @@
     "unity": "2020.3",
     "license": "GPL-3.0-or-later",
     "licensesUrl": "https://raw.githubusercontent.com/am1goo/unity-plugin-spritesheet-3000/master/LICENSE",
+    "documentationUrl": "https://github.com/am1goo/unity-plugin-spritesheet-3000/blob/master/README.md",
     "keywords": [
         "sprites",
+        "spritesheet",
         "animation",
+        "adobe",
         "photoshop"
     ],
     "author": {
         "name": "Pavel 'am1goo' Shestakov",
         "email": "0xShestakov@gmail.com",
-        "url": "https://github.com/am1goo/unity-plugin-spritesheet-3000"
+        "url": "https://github.com/am1goo"
     },
     "type": "library"
 }
