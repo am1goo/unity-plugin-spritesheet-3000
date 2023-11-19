@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ExtensionBundleId="ru.goonswarm.spritesheet3000" ExtensionBundleVersion="1.0" Version="6.0"> <!-- MAJOR-VERSION-UPDATE-MARKER -->
+<ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ExtensionBundleId="com.am1goo.spritesheet3000" ExtensionBundleVersion="1.0" Version="6.0"> <!-- MAJOR-VERSION-UPDATE-MARKER -->
     <ExtensionList>
-        <Extension Id="ru.goonswarm.spritesheet3000.Exporter" Version="6.1.0"/>
+        <Extension Id="com.am1goo.spritesheet3000.Exporter" Version="6.1.0"/>
     </ExtensionList>
     <ExecutionEnvironment>
         <HostList>
@@ -28,7 +28,7 @@
         </RequiredRuntimeList>
     </ExecutionEnvironment>
     <DispatchInfoList>
-        <Extension Id="ru.goonswarm.spritesheet3000.Exporter">
+        <Extension Id="com.am1goo.spritesheet3000.Exporter">
             <DispatchInfo>
                 <Resources>
                     <MainPath>./html/index.html</MainPath>
