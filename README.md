@@ -1,5 +1,5 @@
 # Spritesheet 3000
-Custom pipeline plugin about how to make work together Adobe Photoshop's files with UnityEngine's sprites
+Custom pipeline plugin about how to make work together Adobe Photoshop's files with Unity Engine's sprites
 <p align="center">
   <img src="Readme/header-image.png" alt="header-image"/>
 </p>
@@ -24,7 +24,7 @@ The latest version can be installed via [package manager](https://docs.unity3d.c
 - **Unity 2020.3.x**
 
 ## Using in
-- **Sin Slayers** - RPG with roguelike elements set in a dark fantasy world, where your choices determine how challenging the fights and enemies will be.
+- [Sin Slayers](https://www.gog.com/en/game/sin_slayers) - RPG with roguelike elements set in a dark fantasy world, where your choices determine how challenging the fights and enemies will be.
 
 ## Contribute
 Contribution in any form is very welcome. Bugs, feature requests or feedback can be reported in form of Issues.
