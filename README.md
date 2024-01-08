@@ -1,7 +1,7 @@
 # Spritesheet 3000
 Custom pipeline plugin about how to make work together Adobe Photoshop's files with Unity Engine's sprites
 <p align="center">
-  <img src="Readme/header-image.png" alt="header-image"/>
+  <img src="Readme/header-image.gif" alt="header-image"/>
 </p>
 
 #### Unity Plugin
