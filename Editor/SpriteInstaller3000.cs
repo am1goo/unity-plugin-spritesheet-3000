@@ -13,6 +13,18 @@ namespace Spritesheet3000.Editor
         private const string MENU_ITEM_ROOT = PACKAGE_DISPLAY_NAME;
 
         private static readonly string DoubleLine = $"{Environment.NewLine}{Environment.NewLine}";
+        private static readonly string ExtensionName = "com.am1goo.photoshop.extension.spritesheet3000";
+        
+        private static string _cachedPackagePath = null;
+        
+        [MenuItem(MENU_ITEM_ROOT + "/Open Extensions Folder/Adobe Photoshop CC")]
+        private static void OpenAdobePhotoshopCC()
+        {
+            var pathToPackage = ResolvePackagePath(PACKAGE_NAME);
+            var pathToFolder = Path.Combine(pathToPackage, "Editor/AdobePhotoshop/CC");
+            var pathToExtension = Path.Combine(pathToFolder, ExtensionName);
+            EditorUtility.RevealInFinder(pathToExtension);
+        }
 
         [MenuItem(MENU_ITEM_ROOT + "/Install Extensions/Adobe Photoshop CC")]
         private static void InstallAdobePhotoshopCC()
@@ -24,17 +36,16 @@ namespace Spritesheet3000.Editor
             var installReg = new FileInfo(Path.Combine(src.FullName, "install.reg"));
 
             var extensionsFolder = @"Common Files\Adobe\CEP\extensions";
-            var extensionName = "com.am1goo.photoshop.extension.spritesheet3000";
             var extensionManifest = @"CSXS\manifest.xml";
 
-            var extensionSource = new DirectoryInfo(Path.Combine(src.FullName, extensionName));
+            var extensionSource = new DirectoryInfo(Path.Combine(src.FullName, ExtensionName));
 
             var programFiles64 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            var programFiles64di = new DirectoryInfo(Path.Combine(programFiles64, extensionsFolder, extensionName));
+            var programFiles64di = new DirectoryInfo(Path.Combine(programFiles64, extensionsFolder, ExtensionName));
             var programFiles64manifest = new FileInfo(Path.Combine(programFiles64di.FullName, extensionManifest));
 
             var programFiles32 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-            var programFiles32di = new DirectoryInfo(Path.Combine(programFiles32, extensionsFolder, extensionName));
+            var programFiles32di = new DirectoryInfo(Path.Combine(programFiles32, extensionsFolder, ExtensionName));
             var programFiles32manifest = new FileInfo(Path.Combine(programFiles32di.FullName, extensionManifest));
 
             var installer = new Installer();
@@ -75,9 +86,12 @@ namespace Spritesheet3000.Editor
             Debug.Log($"SpriteInstaller3000: {log}");
             EditorUtility.DisplayDialog("Installer", log, "Okay");
         }
-
+        
         private static string ResolvePackagePath(string packageName)
         {
+            if (_cachedPackagePath != null)
+                return _cachedPackagePath;
+            
             var req = UnityEditor.PackageManager.Client.List();
             while (!req.IsCompleted)
             {
@@ -95,7 +109,8 @@ namespace Spritesheet3000.Editor
                 break;
             }
 
-            return found.resolvedPath;
+            _cachedPackagePath = found.resolvedPath;
+            return _cachedPackagePath;
         }
 
         private class OnlyIfError : Installer.ITask
