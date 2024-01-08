@@ -187,6 +187,19 @@ namespace Spritesheet3000
 
         public bool Play(string clipName, Action callback = null)
         {
+            return PlayInternal(clipName, immediately: false, callback);
+        }
+        
+        public bool PlayForce(string clipName, Action callback = null)
+        {
+            return PlayInternal(clipName, immediately: true, callback);
+        }
+
+        private bool PlayInternal(string clipName, bool immediately, Action callback = null)
+        {
+            if (this.clipName == clipName && !immediately)
+                return false;
+            
             bool res = ChangeClipIndex(clipName);
             if (!res)
                 return false;
