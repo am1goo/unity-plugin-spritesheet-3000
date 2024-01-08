@@ -16,6 +16,17 @@ The latest version can be installed via [package manager](https://docs.unity3d.c
   <img src="Readme/install-photoshop-extension.png" alt="install-photoshop-extension"/>
 </p>
 
+or 
+
+- **Install extentions by yourself**\
+```Spritesheet 3000 -> Open extensions folder -> Adobe Photoshop CC```
+
+- **Copy folder ```com.am1goo.photoshop.extension.spritesheet3000```**\
+into ```C:\Program Files\Common Files\Adobe\CEP\extensions\``` (for Windows x64)\
+or\
+into ```C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\``` (for Windows x86)
+
+## How to use
 - **Open extension via Adoby Photoshop CC**\
 ```Window -> Extensions -> Spritesheet 3000 Exporter```
 
