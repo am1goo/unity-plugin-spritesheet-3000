@@ -1,6 +1,6 @@
 # Spritesheet 3000
 Custom pipeline plugin about how to make work together Adobe Photoshop's files with Unity Engine's sprites
-<p align="center">
+<p align="left">
   <img src="Readme/header-image.gif" alt="header-image"/>
 </p>
 
@@ -12,7 +12,7 @@ The latest version can be installed via [package manager](https://docs.unity3d.c
 #### Adobe Photoshop CC Extension
 - **Install extentions via Unity Editor menu**\
 ```Spritesheet 3000 -> Install extensions -> Adobe Photoshop CC```
-<p align="center">
+<p align="left">
   <img src="Readme/install-photoshop-extension.png" alt="install-photoshop-extension"/>
 </p>
 
@@ -29,6 +29,47 @@ into ```C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\``` (for Window
 ## How to use
 - **Open extension via Adoby Photoshop CC**\
 ```Window -> Extensions -> Spritesheet 3000 Exporter```
+
+- **Export all frames as single files and generate metadata**\
+Set all options and press button ```Export..```
+<p align="left">
+  <img src="Readme/export-photoshop-frames-and-metadata.png" alt="export-photoshop-frames-and-metadata" width=500 height=auto/>
+</p>
+
+- **Import frames via single metedata file**\
+Open ```Unity Editor```, select single metafile in ```Project``` window, click ```Right Mouse Button``` and select ```Pack from file```
+<p align="left">
+  <img src="Readme/import-unity-metadata-single-file.png" alt="import-unity-metadata-single-file"/>
+</p>
+
+or
+
+- **Import bunch of frames via folder**\
+Open ```Unity Editor```, select whole folder in ```Project``` window, click ```Right Mouse Button``` and select ```Pack from folder```
+<p align="left">
+  <img src="Readme/import-unity-metadata-whole-folder.png" alt="import-unity-metadata-whole-folder" />
+</p>
+
+- **Use packed frames in your game**\
+Put component ```SpriteAnimator3000``` on any game object\
+Run any animations via code:
+```csharp
+using Spritesheet3000;
+using UnityEngine;
+
+public class Example : MonoBehaviour
+{
+    [SerializeField]
+    private SpriteAnimationClip3000 _clip;
+    [SerializeField]
+    private SpriteAnimator3000 _anim;
+
+    private void Awake()
+    {
+        _anim.Play(_clip);
+    }
+}
+```
 
 ## Tested in
 - **Unity 2019.4.x**
