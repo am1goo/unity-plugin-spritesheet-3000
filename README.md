@@ -26,6 +26,22 @@ into ```C:\Program Files\Common Files\Adobe\CEP\extensions\``` (for Windows x64)
 or\
 into ```C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\``` (for Windows x86)
 
+## Format structure
+`Adobe Photoshop's extensions` will create some files with ease-to-use structure:
+- metafile with source psd filename (heart of this plugin, contains all required meta information about future animation clip - filter type, compression, ppu and etc.)
+- bunch of animation frames as single sprites (don't worry about that, these files will be skipped and don't used in runtime-mode at all, needed only in editor-mode purposes)
+
+```
+folder|-
+      |- metafile
+      |- frame_01
+      |- frame_02
+      |- frame_03
+      |- frame_04
+      |- ...
+      |- frame_xx
+```
+
 ## How to use
 - **Open extension via Adoby Photoshop CC**\
 ```Window -> Extensions -> Spritesheet 3000 Exporter```
