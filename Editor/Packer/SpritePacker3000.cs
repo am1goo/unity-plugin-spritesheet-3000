@@ -370,7 +370,7 @@ namespace Spritesheet3000.Editor
             };
 
             var clip = CreateOrReplaceAsset(ScriptableObject.CreateInstance<SpriteAnimationClip3000>(), $"{relativeFolder}/{clipName}");
-            clip.EditorRemoveAtlas();
+            clip.EditorRemoveSubAssets();
             clip.EditorStartAtlas();
             for (int i = 0; i < clipInfo.frames.Count; ++i)
             {

@@ -145,29 +145,33 @@ namespace Spritesheet3000
 
     public static List<T> EditorGetChildAssets<T>(ScriptableObject asset) where T : UnityEngine.Object
     {
-        var objs = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(asset));
+        var assetPath = AssetDatabase.GetAssetPath(asset);
+        var objs = AssetDatabase.LoadAllAssetsAtPath(assetPath);
 
         List<T> res = new List<T>();
-        foreach (UnityEngine.Object o in objs)
+        foreach (UnityEngine.Object obj in objs)
         {
-            if (o is T)
+            if (obj == asset)
+                continue;
+            
+            if (obj is T t)
             {
-                res.Add(o as T);
+                res.Add(t);
             }
         }
         return res;
     }
-
-    public void EditorRemoveAtlas()
+    
+    public void EditorRemoveSubAssets()
     {
-        var childAssets = EditorGetChildAssets<Texture>(this);
+        var childAssets = EditorGetChildAssets<UnityEngine.Object>(this);
         for (int i = 0; i < childAssets.Count; ++i)
         {
-            var assetSprite = childAssets[i];
-            if (assetSprite != null)
+            var assetAsset = childAssets[i];
+            if (assetAsset != null)
             {
-                DestroyImmediate(assetSprite, true);
-                assetSprite = null;
+                DestroyImmediate(assetAsset, true);
+                assetAsset = null;
             }
         }
 
