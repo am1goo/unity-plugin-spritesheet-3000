@@ -28,18 +28,20 @@ into ```C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\``` (for Window
 
 ## Format structure
 `Adobe Photoshop's extensions` will create some files with ease-to-use structure:
-- metafile with source psd filename (heart of this plugin, contains all required meta information about future animation clip - filter type, compression, ppu and etc.)
-- bunch of animation frames as single sprites (don't worry about that, these files will be skipped and don't used in runtime-mode at all, needed only in editor-mode purposes)
+- metafile starts with source `psd filename` (heart of this plugin, contains all required meta information about future animation clip - filter type, compression, ppu and etc.)
+- bunch of `animation frames` as single sprites starts with metafile name (don't worry about that, these files will be skipped and don't used in runtime-mode at all, needed only in editor-mode purposes)
+- `atlas texture` as result of importing process
 
 ```
 folder|-
-      |- metafile
-      |- frame_01
-      |- frame_02
-      |- frame_03
-      |- frame_04
+      |- {clipname}.txt
+      |- {clipname}_01.png
+      |- {clipname}_02.png
+      |- {clipname}_03.png
+      |- {clipname}_04.png
       |- ...
-      |- frame_xx
+      |- {clipname}_xx.png
+      |- {clipname}_atlas.png
 ```
 
 ## How to use
