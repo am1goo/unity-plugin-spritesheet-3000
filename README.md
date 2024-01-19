@@ -27,7 +27,7 @@ or\
 into ```C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\``` (for Windows x86)
 
 ## Format structure
-`Adobe Photoshop's extensions` will create some files with ease-to-use structure:
+Adobe Photoshop's extensions will create some files with ease-to-use structure:
 - metafile starts with source `psd filename` (heart of this plugin, contains all required meta information about future animation clip - filter type, compression, ppu and etc.)
 - bunch of `animation frames` as single sprites starts with metafile name (don't worry about that, these files will be skipped and don't used in runtime-mode at all, needed only in editor-mode purposes)
 - `atlas texture` as result of importing process
@@ -88,6 +88,10 @@ public class Example : MonoBehaviour
     }
 }
 ```
+
+## What next?
+- [ ] Add ability to trimming all transparent pixels from frames
+- [ ] Export all frames to `UnityEngine.U2D.SpriteAtlas` file with `.spriteatlas` extension
 
 ## Tested in
 - **Unity 2019.4.x**
