@@ -89,7 +89,7 @@ public class Example : MonoBehaviour
 }
 ```
 
-## What next?
+## What's next?
 - [ ] Add ability to trimming all transparent pixels from frames
 - [ ] Export all frames to `UnityEngine.U2D.SpriteAtlas` file with `.spriteatlas` extension
 
