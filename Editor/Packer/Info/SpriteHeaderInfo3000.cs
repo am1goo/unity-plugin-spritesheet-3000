@@ -37,6 +37,21 @@ namespace Spritesheet3000.Editor
             public TextureWrapMode? wrapMode;
             public bool? mipmapsEnabled;
             public bool? alphaIsTransparency;
+            public SpriteAtlas spriteAtlas;
+
+            [Serializable]
+            public struct SpriteAtlas
+            {
+                public bool enableTightPacking;
+                public bool enableRotation;
+
+                public override string ToString()
+                {
+                    return "[enableTightPacking=" + enableTightPacking +
+                        ", enableRotation=" + enableRotation +
+                        "]";
+                }
+            }
 
             public override string ToString()
             {
@@ -45,6 +60,7 @@ namespace Spritesheet3000.Editor
                 ", wrapMode=" + wrapMode +
                 ", mipmapsEnabled=" + mipmapsEnabled +
                 ", alphaIsTransparency=" + alphaIsTransparency +
+                ", spriteAtlas=" + spriteAtlas +
                 "]";
             }
         }

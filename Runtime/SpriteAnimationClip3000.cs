@@ -205,7 +205,6 @@ namespace Spritesheet3000
             var entries = m_atlasEntries.Select(x => x.origin).ToArray();
             spriteAtlas.Add(entries);
 
-
             var defaultBuildTarget = GetDefaultBuildTarget();
             var platformSettings = spriteAtlas.GetPlatformSettings(defaultBuildTarget);
             if (exportWorker.importerCompression.HasValue)
@@ -214,8 +213,10 @@ namespace Spritesheet3000
 
             var packingSettings = spriteAtlas.GetPackingSettings();
             packingSettings.padding = 4;
-            packingSettings.enableTightPacking = true;
-            packingSettings.enableRotation = false;
+            if (exportWorker.spriteAtlas.tightPacking.HasValue)
+                packingSettings.enableTightPacking = exportWorker.spriteAtlas.tightPacking.Value;
+            if (exportWorker.spriteAtlas.rotation.HasValue)
+                packingSettings.enableRotation = exportWorker.spriteAtlas.rotation.Value;
             spriteAtlas.SetPackingSettings(packingSettings);
 
             var textureSettings = spriteAtlas.GetTextureSettings();
@@ -303,6 +304,7 @@ namespace Spritesheet3000
             public TextureWrapMode? wrapMode;
             public bool? mipmapsEnabled;
             public bool? alphaIsTransparency;
+            public SpriteAtlas spriteAtlas;
 
             public void Apply(string pathInAssets)
             {
@@ -357,6 +359,12 @@ namespace Spritesheet3000
 
                 if (saveAndReimport)
                     texImporter.SaveAndReimport();
+            }
+
+            public struct SpriteAtlas
+            {
+                public bool? tightPacking;
+                public bool? rotation;
             }
         }
 #endif

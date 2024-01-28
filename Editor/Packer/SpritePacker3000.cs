@@ -371,6 +371,11 @@ namespace Spritesheet3000.Editor
                 wrapMode = exportOptions.wrapMode,
                 mipmapsEnabled = exportOptions.mipmapsEnabled,
                 alphaIsTransparency = exportOptions.alphaIsTransparency,
+                spriteAtlas = new SpriteAnimationClip3000.ExportWorker.SpriteAtlas
+                {
+                    tightPacking = exportOptions.spriteAtlas.enableTightPacking,
+                    rotation = exportOptions.spriteAtlas.enableRotation,
+                },
             };
 
             var clip = CreateOrReplaceAsset(ScriptableObject.CreateInstance<SpriteAnimationClip3000>(), $"{relativeFolder}/{clipName}");
