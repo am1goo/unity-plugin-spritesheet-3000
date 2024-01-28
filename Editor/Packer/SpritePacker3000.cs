@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -7,7 +6,10 @@ using System.Text;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using Spritesheet3000;
+using UnityEngine.U2D;
+#if UNITY_EDITOR
+using UnityEditor.U2D;
+#endif
 
 namespace Spritesheet3000.Editor
 {
@@ -15,6 +17,7 @@ namespace Spritesheet3000.Editor
     {
         private const string MENU_ITEM_ROOT = "Spritesheet 3000";
         private const string FILE_EXTENSION = ".asset";
+        private const string ATLAS_EXTENSION = "_atlas.asset";
 
         [MenuItem("Assets/Pack from file", priority = 888)]
         private static void PackFromFile_MenuItem()
@@ -193,10 +196,11 @@ namespace Spritesheet3000.Editor
 
                     FileInfo clipFileInfo = new FileInfo(guidPath);
                     string clipName = clipFileInfo.Name.Replace(clipFileInfo.Extension, FILE_EXTENSION);
+                    string atlasName = clipFileInfo.Name.Replace(clipFileInfo.Extension, ATLAS_EXTENSION);
                     string relativeFolderForClip = RelativePath(clipFileInfo.DirectoryName);
 
                     string error;
-                    bool res = Pack(relativeFolderForClip, clipName, textAsset.text, out error);
+                    bool res = Pack(relativeFolderForClip, clipName, atlasName, textAsset.text, out error);
                     if (res)
                     {
                         successList.Add(relativeFolderForClip + "/" + clipName);
@@ -245,11 +249,11 @@ namespace Spritesheet3000.Editor
 
             FileInfo clipFileInfo = new FileInfo(relativeFilename);
             string clipName = clipFileInfo.Name.Replace(clipFileInfo.Extension, FILE_EXTENSION);
+            string atlasName = clipFileInfo.Name.Replace(clipFileInfo.Extension, ATLAS_EXTENSION);
 
             string absolutePath = clipFileInfo.Directory.FullName;
             string relativePath = RelativePath(absolutePath);
-            string error;
-            bool res = Pack(relativePath, clipName, textAsset.text, out error);
+            bool res = Pack(relativePath, clipName, atlasName, textAsset.text, out var error);
             if (!res)
             {
                 Debug.LogError("[SpritePacker3000] PackFile: invalid text file " + relativeFilename + Environment.NewLine + error);
@@ -331,13 +335,13 @@ namespace Spritesheet3000.Editor
             return new SpritePackerInfo3000(header, frames);
         }
 
-        public static bool Pack(string relativeFolder, string clipName, string json, out string error)
+        public static bool Pack(string relativeFolder, string clipName, string atlasName, string json, out string error)
         {
             SpritePackerInfo3000 clipInfo = null;
             try
             {
                 clipInfo = UnpackJSON(json);
-                return Pack(relativeFolder, clipName, clipInfo, out error);
+                return Pack(relativeFolder, clipName, atlasName, clipInfo, out error);
             }
             catch (Exception ex)
             {
@@ -347,7 +351,7 @@ namespace Spritesheet3000.Editor
             }
         }
 
-        public static bool Pack(string relativeFolder, string clipName, SpritePackerInfo3000 clipInfo, out string error)
+        public static bool Pack(string relativeFolder, string clipName, string atlasName, SpritePackerInfo3000 clipInfo, out string error)
         {
             AssetDatabase.Refresh();
 
@@ -384,10 +388,11 @@ namespace Spritesheet3000.Editor
                 }
                 clip.EditorAddToAtlas(sprite, frameInfo.playbackTime, exportWorker);
             }
-            clip.EditorFinishAtlas(exportWorker);
+
+            var spriteAtlas = CreateOrReplaceAsset(new SpriteAtlas(), $"{relativeFolder}/{atlasName}");
+            clip.EditorFinishAtlas(spriteAtlas, exportWorker);
 
             EditorUtility.SetDirty(clip);
-            EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             error = string.Empty;
