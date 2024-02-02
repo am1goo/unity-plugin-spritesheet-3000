@@ -20,6 +20,7 @@ namespace Spritesheet3000
         [SerializeField] [HideInInspector] private List<SpriteAnimationFrame3000> m_frames = new List<SpriteAnimationFrame3000>();
 
         private Sprite[] m_sprites = null;
+        private int m_spritesLength = 0;
 
         private void OnEnable()
         {
@@ -96,14 +97,42 @@ namespace Spritesheet3000
             if (spriteIdx == -1)
                 return null;
 
-            if (m_sprites == null)
+#if UNITY_EDITOR
+            try
             {
-                int spriteCount = m_spriteAtlas.spriteCount;
-                m_sprites = new Sprite[spriteCount];
-                m_spriteAtlas.GetSprites(m_sprites);
-                Array.Sort(m_sprites, SortBySpriteName);
+#endif
+                if (m_sprites == null)
+                {
+#if UNITY_EDITOR
+                    switch (EditorSettings.spritePackerMode)
+                    {
+                        case SpritePackerMode.BuildTimeOnlyAtlas:
+                            SpriteAtlasUtility.PackAtlases(new[] { m_spriteAtlas }, EditorUserBuildSettings.activeBuildTarget, canCancel: false);
+                            break;
+
+                        case SpritePackerMode.AlwaysOnAtlas:
+                            //do nothing, this SpriteAtlas packed already
+                            break;
+                    }
+#endif
+                    m_spritesLength = m_spriteAtlas.spriteCount;
+                    m_sprites = new Sprite[m_spritesLength];
+                    m_spriteAtlas.GetSprites(m_sprites);
+                    Array.Sort(m_sprites, SortBySpriteName);
+                }
+
+                if (m_spritesLength == 0)
+                    return null;
+
+                return m_sprites[spriteIdx];
+#if UNITY_EDITOR
             }
-            return m_sprites[spriteIdx];
+            catch (Exception ex)
+            {
+                var pathInAssets = AssetDatabase.GetAssetPath(this);
+                throw new Exception(pathInAssets, ex);
+            }
+#endif
         }
 
         public int GetSpriteIndex(string spriteName)
