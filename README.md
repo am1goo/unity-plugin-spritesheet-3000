@@ -6,12 +6,12 @@ Custom pipeline plugin about how to make work together Adobe Photoshop's files w
 
 #### Unity Plugin
 The latest version can be installed via [package manager](https://docs.unity3d.com/Manual/upm-ui-giturl.html) using following git URL: \
-```https://github.com/am1goo/unity-plugin-spritesheet-3000.git#0.4.1```
+`https://github.com/am1goo/unity-plugin-spritesheet-3000.git#0.4.1`
 
 ## Getting started
 #### Adobe Photoshop CC Extension
 - **Install extentions via Unity Editor menu**\
-```Spritesheet 3000 -> Install extensions -> Adobe Photoshop CC```
+in top menu find and click `Spritesheet 3000 -> Install extensions -> Adobe Photoshop CC`
 <p align="left">
   <img src="Readme/install-photoshop-extension.png" alt="install-photoshop-extension"/>
 </p>
@@ -19,12 +19,12 @@ The latest version can be installed via [package manager](https://docs.unity3d.c
 or 
 
 - **Install extentions by yourself**\
-```Spritesheet 3000 -> Open extensions folder -> Adobe Photoshop CC```
+in top menu find and click `Spritesheet 3000 -> Open extensions folder -> Adobe Photoshop CC`
 
-- **Copy folder ```com.am1goo.photoshop.extension.spritesheet3000```**\
-into ```C:\Program Files\Common Files\Adobe\CEP\extensions\``` (for Windows x64)\
+- **Copy folder `com.am1goo.photoshop.extension.spritesheet3000`**\
+into `C:\Program Files\Common Files\Adobe\CEP\extensions\` (for Windows x64)\
 or\
-into ```C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\``` (for Windows x86)
+into `C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\` (for Windows x86)
 
 ## Format structure
 Adobe Photoshop's extensions will create some files with ease-to-use structure:
@@ -46,16 +46,16 @@ folder|-
 
 ## How to use
 - **Open extension via Adoby Photoshop CC**\
-```Window -> Extensions -> Spritesheet 3000 Exporter```
+`Window -> Extensions -> Spritesheet 3000 Exporter`
 
 - **Export all frames as single files and generate metadata**\
-Set all options and press button ```Export..```
+Set all options and press button `Export..`
 <p align="left">
   <img src="Readme/export-photoshop-frames-and-metadata.png" alt="export-photoshop-frames-and-metadata" width=500 height=auto/>
 </p>
 
 - **Import frames via single metedata file**\
-Open ```Unity Editor```, select single metafile in ```Project``` window, click ```Right Mouse Button``` and select ```Pack from file```
+Open `Unity Editor`, select single metafile in `Project` window, click `Right Mouse Button` and select `Pack from file`
 <p align="left">
   <img src="Readme/import-unity-metadata-single-file.png" alt="import-unity-metadata-single-file"/>
 </p>
@@ -63,13 +63,13 @@ Open ```Unity Editor```, select single metafile in ```Project``` window, click `
 or
 
 - **Import bunch of frames via folder**\
-Open ```Unity Editor```, select whole folder in ```Project``` window, click ```Right Mouse Button``` and select ```Pack from folder```
+Open `Unity Editor`, select whole folder in `Project` window, click `Right Mouse Button` and select `Pack from folder`
 <p align="left">
   <img src="Readme/import-unity-metadata-whole-folder.png" alt="import-unity-metadata-whole-folder" />
 </p>
 
 - **Use packed frames in your game**\
-Put component ```SpriteAnimator3000``` on any game object\
+Put component `SpriteAnimator3000` on any game object\
 Run any animations via code:
 ```csharp
 using Spritesheet3000;
@@ -90,8 +90,8 @@ public class Example : MonoBehaviour
 ```
 
 ## What's next?
-- [ ] Add ability to trimming all transparent pixels from frames
-- [ ] Export all frames to `UnityEngine.U2D.SpriteAtlas` file with `.spriteatlas` extension
+- [x] Add ability to trimming all transparent pixels from frames
+- [x] Export all frames to `UnityEngine.U2D.SpriteAtlas` file with `.asset` extension
 
 ## Tested in
 - **Unity 2019.4.x**
