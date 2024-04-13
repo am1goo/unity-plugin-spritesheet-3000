@@ -1,10 +1,10 @@
 {
     "name": "com.am1goo.spritesheet3000",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "displayName": "Spritesheet 3000",
     "description": "Spritesheet 3000 Plugin for Unity",
     "unity": "2020.3",
-    "license": "GPL-3.0-or-later",
+    "license": "MIT",
     "licensesUrl": "https://raw.githubusercontent.com/am1goo/unity-plugin-spritesheet-3000/master/LICENSE",
     "documentationUrl": "https://github.com/am1goo/unity-plugin-spritesheet-3000/blob/master/README.md",
     "keywords": [
