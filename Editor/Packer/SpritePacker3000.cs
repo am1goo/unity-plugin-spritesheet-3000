@@ -379,6 +379,7 @@ namespace Spritesheet3000.Editor
             };
 
             var clip = CreateOrReplaceAsset(ScriptableObject.CreateInstance<SpriteAnimationClip3000>(), $"{relativeFolder}/{clipName}");
+            clip.name = clipName.Split('.')[0];
             clip.EditorRemoveSubAssets();
             clip.EditorStartAtlas();
             for (int i = 0; i < clipInfo.frames.Count; ++i)
@@ -394,7 +395,9 @@ namespace Spritesheet3000.Editor
                 clip.EditorAddToAtlas(sprite, frameInfo.playbackTime, exportWorker);
             }
 
-            var spriteAtlas = CreateOrReplaceAsset(new SpriteAtlas(), $"{relativeFolder}/{atlasName}");
+            var spriteAtlas = new SpriteAtlas();
+            spriteAtlas.name = atlasName.Split('.')[0];
+            spriteAtlas = CreateOrReplaceAsset(spriteAtlas, $"{relativeFolder}/{atlasName}");
             clip.EditorFinishAtlas(spriteAtlas, exportWorker);
 
             EditorUtility.SetDirty(clip);
