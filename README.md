@@ -1,7 +1,7 @@
 [![openupm](https://img.shields.io/npm/v/com.am1goo.spritesheet3000?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.am1goo.spritesheet3000/)
 
 # Spritesheet 3000 for Unity
-Custom pipeline plugin about how to make work together Adobe Photoshop's files with Unity Engine's sprites
+Custom pipeline plugin about how to make work together Adobe Photoshop's files with Unity Engine's sprites and sprite atlases.
 <p align="left">
   <img src="Readme/header-image.gif" alt="header-image"/>
 </p>
