@@ -138,7 +138,11 @@ namespace Spritesheet3000
 
             for (int i = 0; i < m_copyRenderers.Count; ++i)
             {
-                SetRendererSprite(m_copyRenderers[i], sprite);
+                var r = m_copyRenderers[i];
+                if (r == null)
+                    continue;
+
+                SetRendererSprite(r, sprite);
             }
         }
 
@@ -148,7 +152,11 @@ namespace Spritesheet3000
 
             for (int i = 0; i < m_copyRenderers.Count; ++i)
             {
-                SetRendererFlip(m_copyRenderers[i], flipX, flipY);
+                var r = m_copyRenderers[i];
+                if (r == null)
+                    continue;
+
+                SetRendererFlip(r, flipX, flipY);
             }
         }
 

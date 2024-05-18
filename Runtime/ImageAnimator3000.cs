@@ -7,13 +7,12 @@ namespace Spritesheet3000
     {
         protected override Sprite GetRendererSprite(Image renderer)
         {
-            return renderer != null ? renderer.sprite : null;
+            return renderer.sprite;
         }
 
         protected override void SetRendererSprite(Image renderer, Sprite sprite)
         {
-            if (renderer != null)
-                renderer.sprite = sprite;
+            renderer.sprite = sprite;
         }
 
         protected override void SetRendererFlip(Image renderer, bool flipX, bool flipY)

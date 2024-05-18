@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using Spritesheet3000;
 
 namespace Spritesheet3000.Editor
 {
@@ -18,14 +17,16 @@ namespace Spritesheet3000.Editor
             anim.EditorRefresh();
             currentTime = 0;
             currentClipOptions = anim.EditorCreateClipsOptions();
-
-            EditorApplication.update += Update;
         }
 
         private void OnDisable()
         {
             anim = null;
-            EditorApplication.update -= Update;
+        }
+
+        public override bool RequiresConstantRepaint()
+        {
+            return true;
         }
 
         public override void OnInspectorGUI()
@@ -35,16 +36,18 @@ namespace Spritesheet3000.Editor
             SpriteAnimator3000InspectorHelper.OnInspectorDraw(target, anim, ref currentTime, ref currentClipOptions);
 
             serializedObject.ApplyModifiedProperties();
+
+            EditorUpdate();
         }
 
-        private void Update()
+        private void EditorUpdate()
         {
-            if (!Application.isPlaying)
+            if (Application.isPlaying)
+                return;
+
+            if (anim.playInEditor)
             {
-                if (anim.playInEditor)
-                {
-                    anim.EditorUpdate();
-                }
+                anim.EditorUpdate();
             }
         }
     }
