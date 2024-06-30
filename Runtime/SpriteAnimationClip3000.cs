@@ -107,7 +107,8 @@ namespace Spritesheet3000
                     switch (EditorSettings.spritePackerMode)
                     {
                         case SpritePackerMode.BuildTimeOnlyAtlas:
-                            SpriteAtlasUtility.PackAtlases(new[] { m_spriteAtlas }, EditorUserBuildSettings.activeBuildTarget, canCancel: false);
+                            if (m_spriteAtlas != null)
+                                SpriteAtlasUtility.PackAtlases(new[] { m_spriteAtlas }, EditorUserBuildSettings.activeBuildTarget, canCancel: false);
                             break;
 
                         case SpritePackerMode.AlwaysOnAtlas:
@@ -115,10 +116,18 @@ namespace Spritesheet3000
                             break;
                     }
 #endif
-                    m_spritesLength = m_spriteAtlas.spriteCount;
-                    m_sprites = new Sprite[m_spritesLength];
-                    m_spriteAtlas.GetSprites(m_sprites);
-                    Array.Sort(m_sprites, SortBySpriteName);
+                    if (m_spriteAtlas != null)
+                    {
+                        m_spritesLength = m_spriteAtlas.spriteCount;
+                        m_sprites = new Sprite[m_spritesLength];
+                        m_spriteAtlas.GetSprites(m_sprites);
+                        Array.Sort(m_sprites, SortBySpriteName);
+                    }
+                    else
+                    {
+                        m_spritesLength = 0;
+                        m_sprites = new Sprite[m_spritesLength];
+                    }
                 }
 
                 if (m_spritesLength == 0)
