@@ -397,7 +397,7 @@ namespace Spritesheet3000.Editor
 
             var spriteAtlas = new SpriteAtlas();
             spriteAtlas.name = atlasName.Split('.')[0];
-            spriteAtlas = CreateOrReplaceAsset(spriteAtlas, $"{relativeFolder}/{atlasName}");
+            spriteAtlas = CreateOrGetAsset(spriteAtlas, $"{relativeFolder}/{atlasName}");
             clip.EditorFinishAtlas(spriteAtlas, exportWorker);
 
             EditorUtility.SetDirty(clip);
@@ -417,6 +417,19 @@ namespace Spritesheet3000.Editor
                 return "Assets" + absolutePath.Substring(Application.dataPath.Length);
             }
             return absolutePath;
+        }
+		
+		private static T CreateOrGetAsset<T>(T asset, string path) where T : UnityEngine.Object
+        {
+            T existingAsset = AssetDatabase.LoadAssetAtPath<T>(path);
+
+            if (existingAsset == null)
+            {
+                AssetDatabase.CreateAsset(asset, path);
+                existingAsset = asset;
+            }
+
+            return existingAsset;
         }
 
         private static T CreateOrReplaceAsset<T>(T asset, string path) where T : UnityEngine.Object
