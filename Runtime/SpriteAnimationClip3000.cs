@@ -27,6 +27,7 @@ namespace Spritesheet3000
             m_sprites = null;
         }
 
+        public SpriteAtlas spriteAtlas { get { return m_spriteAtlas; } }
         public int framesCount { get { return m_frames.Count; } }
         public float length { get { return m_length; } }
         public float GetLength(float timeScale)
