@@ -101,7 +101,7 @@ public class Example : MonoBehaviour
 - **Unity 2022.3.x**
 
 ## Using in
-- [Sin Slayers](https://www.gog.com/en/game/sin_slayers) - RPG with roguelike elements set in a dark fantasy world, where your choices determine how challenging the fights and enemies will be.
+- [Sin Slayers](https://sinslayers.com) - RPG with roguelike elements set in a dark fantasy world, where your choices determine how challenging the fights and enemies will be.
 
 ## Contribute
 Contribution in any form is very welcome. Bugs, feature requests or feedback can be reported in form of Issues.
