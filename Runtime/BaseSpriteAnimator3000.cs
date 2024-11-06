@@ -57,7 +57,7 @@ namespace Spritesheet3000
         public float clipLength { get { return clip?.GetLength(totalTimeScale) ?? 0; } }
         public float normalizedTime { get { return clipTime / clipLength; } }
 #if UNITY_EDITOR
-    public int editorIndex { get { return clipIdx; } set { clipIdx = value; } }
+        public int editorIndex { get { return clipIdx; } set { clipIdx = value; } }
 #endif
 
         private SpriteAnimatorTimer3000 timer = new SpriteAnimatorTimer3000();
@@ -186,7 +186,7 @@ namespace Spritesheet3000
             {
                 m_spritesheets.Add(clip);
 #if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(this);
+                UnityEditor.EditorUtility.SetDirty(this);
 #endif
             }
 
@@ -197,7 +197,7 @@ namespace Spritesheet3000
         {
             return PlayInternal(clipName, immediately: false, callback);
         }
-        
+
         public bool PlayForce(string clipName, Action callback = null)
         {
             return PlayInternal(clipName, immediately: true, callback);
@@ -207,7 +207,7 @@ namespace Spritesheet3000
         {
             if (this.clipName == clipName && !immediately)
                 return false;
-            
+
             bool res = ChangeClipIndex(clipName);
             if (!res)
                 return false;
@@ -271,11 +271,12 @@ namespace Spritesheet3000
         }
 
 #if UNITY_EDITOR
-    private float lastRealtimeSinceStartup = 0;
-    public void EditorUpdate()
-    {
-        if (!Application.isPlaying)
+        private float lastRealtimeSinceStartup = 0;
+        public void EditorUpdate()
         {
+            if (Application.isPlaying)
+                return;
+
             if (playInEditor)
             {
                 float deltaTime = Time.realtimeSinceStartup - lastRealtimeSinceStartup;
@@ -283,43 +284,44 @@ namespace Spritesheet3000
                 lastRealtimeSinceStartup = Time.realtimeSinceStartup;
             }
         }
-    }
 
-    public void EditorSampleByNormalizedTime(SpriteAnimationClip3000 clip, float normalizedtime)
-    {
-        Sprite sprite = SampleByNormalizedTime(clip, normalizedtime);
-        ChangeSprite(sprite);
-    }
-
-    public void EditorSampleByFrameIndex(SpriteAnimationClip3000 clip, int frameIndex)
-    {
-        Sprite sprite = SampleByFrameIndex(clip, frameIndex);
-        ChangeSprite(sprite);
-    }
-
-    public string[] EditorCreateClipsOptions()
-    {
-        List<string> clipIndexes = new List<string>();
-        if (m_spritesheets != null)
+        public void EditorSampleByNormalizedTime(SpriteAnimationClip3000 clip, float normalizedtime)
         {
-            for (int i = 0; i < m_spritesheets.Count; ++i)
+            Sprite sprite = SampleByNormalizedTime(clip, normalizedtime);
+            ChangeSprite(sprite);
+        }
+
+        public void EditorSampleByFrameIndex(SpriteAnimationClip3000 clip, int frameIndex)
+        {
+            Sprite sprite = SampleByFrameIndex(clip, frameIndex);
+            ChangeSprite(sprite);
+        }
+
+        public string[] EditorCreateClipsOptions()
+        {
+            List<string> clipIndexes = new List<string>();
+            if (m_spritesheets != null)
             {
-                if (m_spritesheets[i] != null)
+                for (int i = 0; i < m_spritesheets.Count; ++i)
                 {
-                    clipIndexes.Add(m_spritesheets[i].name);
+                    if (m_spritesheets[i] != null)
+                    {
+                        clipIndexes.Add(m_spritesheets[i].name);
+                    }
                 }
             }
+            return clipIndexes.ToArray();
         }
-        return clipIndexes.ToArray();
-    }
-    
-    public void EditorRefresh()
-    {
-        foreach (var clip in m_spritesheets)
+
+        public void EditorRefresh()
         {
-            clip.EditorRefresh();
+            foreach (var clip in m_spritesheets)
+            {
+                if (clip == null)
+                    continue;
+                clip.EditorRefresh();
+            }
         }
-    }
 #endif
     }
 }

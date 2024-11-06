@@ -13,11 +13,11 @@ namespace Spritesheet3000
     public class SpriteAnimationClip3000 : ScriptableObject
     {
         [SerializeField] private SpriteAtlas m_spriteAtlas;
-        [SerializeField] [HideInInspector] private float m_length;
-        [SerializeField] [HideInInspector] private List<string> m_spritesName = new List<string>();
-        [SerializeField] [HideInInspector] private List<SpriteAnimationParameter3000> m_spritesParameters = new List<SpriteAnimationParameter3000>();
-        [SerializeField] [HideInInspector] private List<SpriteAnimationFrameRange3000> m_framesRange = new List<SpriteAnimationFrameRange3000>();
-        [SerializeField] [HideInInspector] private List<SpriteAnimationFrame3000> m_frames = new List<SpriteAnimationFrame3000>();
+        [SerializeField, HideInInspector] private float m_length;
+        [SerializeField, HideInInspector] private List<string> m_spritesName = new List<string>();
+        [SerializeField, HideInInspector] private List<SpriteAnimationParameter3000> m_spritesParameters = new List<SpriteAnimationParameter3000>();
+        [SerializeField, HideInInspector] private List<SpriteAnimationFrameRange3000> m_framesRange = new List<SpriteAnimationFrameRange3000>();
+        [SerializeField, HideInInspector] private List<SpriteAnimationFrame3000> m_frames = new List<SpriteAnimationFrame3000>();
 
         private Sprite[] m_sprites = null;
         private int m_spritesLength = 0;
@@ -121,7 +121,20 @@ namespace Spritesheet3000
                     {
                         m_spritesLength = m_spriteAtlas.spriteCount;
                         m_sprites = new Sprite[m_spritesLength];
-                        m_spriteAtlas.GetSprites(m_sprites);
+                        if (Application.isPlaying)
+                        {
+                            m_spriteAtlas.GetSprites(m_sprites);
+                        }
+                        else
+                        {
+#if UNITY_EDITOR
+                            var objs = m_spriteAtlas.GetPackables();
+                            for (int i = 0; i < objs.Length; ++i)
+                            {
+                                m_sprites[i] = (Sprite)objs[i];
+                            }
+#endif
+                        }
                         Array.Sort(m_sprites, SortBySpriteName);
                     }
                     else
