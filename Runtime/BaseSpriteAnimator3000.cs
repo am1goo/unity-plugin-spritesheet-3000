@@ -8,16 +8,17 @@ namespace Spritesheet3000
     {
         [SerializeField] private T m_renderer;
         [SerializeField] private List<T> m_copyRenderers;
-        [SerializeField] private List<SpriteAnimationClip3000> m_spritesheets;
-        [SerializeField] [HideInInspector] private int clipIdx = 0;
         [SerializeField] [HideInInspector] private ESpriteAnimatorThread m_timeThread = ESpriteAnimatorThread.RelatedOnTimeScale;
         [SerializeField] [HideInInspector] private float m_timeScale = 1f;
+        
+        protected abstract List<SpriteAnimationClip3000> GetSpritesheets();
 
         protected abstract void SetRendererSprite(T renderer, Sprite sprite);
         protected abstract Sprite GetRendererSprite(T renderer);
 
         protected abstract void SetRendererFlip(T renderer, bool flipX, bool flipY);
 
+        private int clipIdx = 0;
         public ESpriteAnimatorThread timeThread { get { return m_timeThread; } set { m_timeThread = value; } }
         public float timeScale { get { return m_timeScale; } set { m_timeScale = value; } }
         public float totalTimeScale { get { return timeScale * SpriteAnimatorTimer3000.timeScale; } }
@@ -123,13 +124,14 @@ namespace Spritesheet3000
 
         private SpriteAnimationClip3000 GetClipInternal(int clipIndex)
         {
-            if (m_spritesheets == null || m_spritesheets.Count == 0)
+            var spritesheets = GetSpritesheets();
+            if (spritesheets == null || spritesheets.Count == 0)
                 return null;
 
-            if (clipIndex < 0 || clipIndex >= m_spritesheets.Count)
+            if (clipIndex < 0 || clipIndex >= spritesheets.Count)
                 return null;
 
-            return m_spritesheets[clipIndex];
+            return spritesheets[clipIndex];
         }
 
         private void ChangeSprite(Sprite sprite)
@@ -182,12 +184,10 @@ namespace Spritesheet3000
             if (clip == null)
                 return false;
 
-            if (!m_spritesheets.Contains(clip))
+            var spritesheets = GetSpritesheets();
+            if (!spritesheets.Contains(clip))
             {
-                m_spritesheets.Add(clip);
-#if UNITY_EDITOR
-                UnityEditor.EditorUtility.SetDirty(this);
-#endif
+                spritesheets.Add(clip);
             }
 
             return Play(clip.name, callback);
@@ -221,9 +221,14 @@ namespace Spritesheet3000
 
         public int GetClipIndex(string clipName)
         {
-            for (int i = 0; i < m_spritesheets.Count; ++i)
+            var spritesheets = GetSpritesheets();
+            for (int i = 0; i < spritesheets.Count; ++i)
             {
-                if (m_spritesheets[i] != null && m_spritesheets[i].name == clipName)
+                var spritesheet = spritesheets[i];
+                if (spritesheet == null)
+                    continue;
+
+                if (spritesheet.name == clipName)
                 {
                     return i;
                 }
@@ -243,7 +248,8 @@ namespace Spritesheet3000
             if (idx == -1)
                 return null;
 
-            return m_spritesheets[idx];
+            var spritesheets = GetSpritesheets();
+            return spritesheets[idx];
         }
 
         public float GetClipLength(string clipName)
@@ -255,17 +261,18 @@ namespace Spritesheet3000
             return res.GetLength(totalTimeScale);
         }
 
-        public bool GetClips(ref List<SpriteAnimationClip3000> result)
+        public bool GetClips(List<SpriteAnimationClip3000> result)
         {
             if (result == null)
                 return false;
 
-            if (m_spritesheets == null)
+            var spritesheets = GetSpritesheets();
+            if (spritesheets == null)
                 return false;
 
-            for (int i = 0; i < m_spritesheets.Count; ++i)
+            for (int i = 0; i < spritesheets.Count; ++i)
             {
-                result.Add(m_spritesheets[i]);
+                result.Add(spritesheets[i]);
             }
             return true;
         }
@@ -299,15 +306,17 @@ namespace Spritesheet3000
 
         public string[] EditorCreateClipsOptions()
         {
-            List<string> clipIndexes = new List<string>();
-            if (m_spritesheets != null)
+            var clipIndexes = new List<string>();
+            var spritesheets = GetSpritesheets();
+            if (spritesheets != null)
             {
-                for (int i = 0; i < m_spritesheets.Count; ++i)
+                for (int i = 0; i < spritesheets.Count; ++i)
                 {
-                    if (m_spritesheets[i] != null)
-                    {
-                        clipIndexes.Add(m_spritesheets[i].name);
-                    }
+                    var spritesheet = spritesheets[i];
+                    if (spritesheet == null)
+                        continue;
+
+                    clipIndexes.Add(spritesheet.name);
                 }
             }
             return clipIndexes.ToArray();
@@ -315,11 +324,14 @@ namespace Spritesheet3000
 
         public void EditorRefresh()
         {
-            foreach (var clip in m_spritesheets)
+            var spritesheets = GetSpritesheets();
+            for (int i = 0; i < spritesheets.Count; ++i)
             {
-                if (clip == null)
+                var spritesheet = spritesheets[i];
+                if (spritesheet == null)
                     continue;
-                clip.EditorRefresh();
+
+                spritesheet.EditorRefresh();
             }
         }
 #endif
