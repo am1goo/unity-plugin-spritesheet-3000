@@ -354,6 +354,7 @@ namespace Spritesheet3000
             public FilterMode? filterMode;
             public TextureImporterCompression? importerCompression;
             public TextureWrapMode? wrapMode;
+            public int? pixelPerUnit;
             public bool? mipmapsEnabled;
             public bool? alphaIsTransparency;
             public SpriteAtlas spriteAtlas;
@@ -369,7 +370,7 @@ namespace Spritesheet3000
                     if (texImporter.filterMode != filterMode)
                     {
                         texImporter.filterMode = filterMode.Value;
-                        saveAndReimport = true;
+                        saveAndReimport |= true;
                     }
                 }
 
@@ -378,7 +379,7 @@ namespace Spritesheet3000
                     if (texImporter.textureCompression != importerCompression)
                     {
                         texImporter.textureCompression = importerCompression.Value;
-                        saveAndReimport = true;
+                        saveAndReimport |= true;
                     }
                 }
 
@@ -387,7 +388,16 @@ namespace Spritesheet3000
                     if (texImporter.wrapMode != wrapMode)
                     {
                         texImporter.wrapMode = wrapMode.Value;
-                        saveAndReimport = true;
+                        saveAndReimport |= true;
+                    }
+                }
+
+                if (pixelPerUnit.HasValue)
+                {
+                    if (texImporter.spritePixelsPerUnit != pixelPerUnit)
+                    {
+                        texImporter.spritePixelsPerUnit = pixelPerUnit.Value;
+                        saveAndReimport |= true;
                     }
                 }
 
@@ -396,7 +406,7 @@ namespace Spritesheet3000
                     if (texImporter.mipmapEnabled != mipmapsEnabled)
                     {
                         texImporter.mipmapEnabled = mipmapsEnabled.Value;
-                        saveAndReimport = true;
+                        saveAndReimport |= true;
                     }
                 }
 
@@ -405,7 +415,7 @@ namespace Spritesheet3000
                     if (texImporter.alphaIsTransparency != alphaIsTransparency)
                     {
                         texImporter.alphaIsTransparency = alphaIsTransparency.Value;
-                        saveAndReimport = true;
+                        saveAndReimport |= true;
                     }
                 }
 

@@ -65,13 +65,13 @@ namespace Spritesheet3000
         private Action callback = null;
 
         private bool isAnimated = false;
-        private void Awake()
+        protected virtual void Awake()
         {
             timer.Invoke();
             ChangeFlip(flipX, flipY);
         }
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             timer.Invoke();
         }

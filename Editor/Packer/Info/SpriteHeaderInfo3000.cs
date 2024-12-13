@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
-using Spritesheet3000;
 
 namespace Spritesheet3000.Editor
 {
@@ -35,6 +34,7 @@ namespace Spritesheet3000.Editor
             public FilterMode? filterMode;
             public TextureImporterCompression? importerCompression;
             public TextureWrapMode? wrapMode;
+            public int? pixelPerUnit;
             public bool? mipmapsEnabled;
             public bool? alphaIsTransparency;
             public SpriteAtlas spriteAtlas;
@@ -58,6 +58,7 @@ namespace Spritesheet3000.Editor
                 return "[filterMode=" + filterMode +
                 ", importerCompression=" + importerCompression +
                 ", wrapMode=" + wrapMode +
+                ", pixelPerUnit=" + pixelPerUnit +
                 ", mipmapsEnabled=" + mipmapsEnabled +
                 ", alphaIsTransparency=" + alphaIsTransparency +
                 ", spriteAtlas=" + spriteAtlas +

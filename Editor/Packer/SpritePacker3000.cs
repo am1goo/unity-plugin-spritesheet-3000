@@ -295,16 +295,21 @@ namespace Spritesheet3000.Editor
 
             //parse header
             var headerDict = headerObj as Dictionary<string, object>;
-            var photoshopVersion = headerDict.ContainsKey("photoshopVersion") ? (string)headerDict["photoshopVersion"] : "unknown";
-            var formatVersion = headerDict.ContainsKey("formatVersion") ? int.Parse(headerDict["formatVersion"].ToString()) : 0;
+            var photoshopVersion = headerDict.TryGetValue("photoshopVersion", out var pv) ? (string)pv : "unknown";
+            var formatVersion = headerDict.TryGetValue("formatVersion", out var fv) ? int.Parse(fv.ToString()) : 0;
 
             FilterMode? filterMode = null;
-            if (headerDict.ContainsKey("exportFilterMode"))
-                filterMode = (FilterMode)Enum.Parse(typeof(FilterMode), (string)headerDict["exportFilterMode"]);
+            if (headerDict.TryGetValue("exportFilterMode", out var exportFilterMode))
+                filterMode = (FilterMode)Enum.Parse(typeof(FilterMode), (string)exportFilterMode);
 
             TextureImporterCompression? importerCompression = null;
-            if (headerDict.ContainsKey("exportImporterCompression"))
-                importerCompression = (TextureImporterCompression)Enum.Parse(typeof(TextureImporterCompression), (string)headerDict["exportImporterCompression"]);
+            if (headerDict.TryGetValue("exportImporterCompression", out var exportImporterCompression))
+                importerCompression = (TextureImporterCompression)Enum.Parse(typeof(TextureImporterCompression), (string)exportImporterCompression);
+
+            int? pixelsPerUnit = null;
+            if (headerDict.TryGetValue("exportPixelsPerUnit", out var exportPixelsPerUnit))
+                pixelsPerUnit = int.Parse(exportPixelsPerUnit.ToString());
+
 
             TextureWrapMode? wrapMode = TextureWrapMode.Clamp;
             bool? mipmapsEnabled = false;
@@ -315,8 +320,10 @@ namespace Spritesheet3000.Editor
                 filterMode = filterMode,
                 importerCompression = importerCompression,
                 wrapMode = wrapMode,
+                pixelPerUnit = pixelsPerUnit,
                 mipmapsEnabled = mipmapsEnabled,
                 alphaIsTransparency = alphaIsTransparency,
+
             };
             var header = new SpriteHeaderInfo3000(photoshopVersion, formatVersion, exportOptions);
 
@@ -369,6 +376,7 @@ namespace Spritesheet3000.Editor
                 filterMode = exportOptions.filterMode,
                 importerCompression = exportOptions.importerCompression,
                 wrapMode = exportOptions.wrapMode,
+                pixelPerUnit = exportOptions.pixelPerUnit,
                 mipmapsEnabled = exportOptions.mipmapsEnabled,
                 alphaIsTransparency = exportOptions.alphaIsTransparency,
                 spriteAtlas = new SpriteAnimationClip3000.ExportWorker.SpriteAtlas
