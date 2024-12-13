@@ -179,6 +179,11 @@ namespace Spritesheet3000
             return true;
         }
 
+        public void Clear()
+        {
+            ChangeSprite(null);
+        }
+
         public bool Play(SpriteAnimationClip3000 clip, Action callback = null)
         {
             if (clip == null)
