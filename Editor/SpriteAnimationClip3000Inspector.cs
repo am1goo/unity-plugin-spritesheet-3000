@@ -1,5 +1,4 @@
 ﻿using UnityEditor;
-using Spritesheet3000;
 
 namespace Spritesheet3000.Editor
 {
@@ -24,7 +23,8 @@ namespace Spritesheet3000.Editor
 
         private void OnPlayModeStateChanged(PlayModeStateChange change)
         {
-            clip.EditorRefresh();
+            if (clip != null)
+                clip.EditorRefresh();
         }
 
         public override void OnInspectorGUI()

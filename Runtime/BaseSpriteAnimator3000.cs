@@ -21,7 +21,7 @@ namespace Spritesheet3000
         private int clipIdx = 0;
         public ESpriteAnimatorThread timeThread { get { return m_timeThread; } set { m_timeThread = value; } }
         public float timeScale { get { return m_timeScale; } set { m_timeScale = value; } }
-        public float totalTimeScale { get { return timeScale * SpriteAnimatorTimer3000.timeScale; } }
+        public float totalTimeScale { get { return m_timeScale * SpriteAnimatorTimer3000.timeScale; } }
 
         [SerializeField]
         [HideInInspector]
@@ -60,31 +60,34 @@ namespace Spritesheet3000
 #if UNITY_EDITOR
         public int editorIndex { get { return clipIdx; } set { clipIdx = value; } }
 #endif
-
-        private SpriteAnimatorTimer3000 timer = new SpriteAnimatorTimer3000();
         private Action callback = null;
 
+        private static readonly SpriteAnimatorTimer3000 timer = new SpriteAnimatorTimer3000();
+
         private bool isAnimated = false;
+
+        protected virtual void OnValidate()
+        {
+            if (m_copyRenderers == null)
+                m_copyRenderers = new List<T>();
+        }
+
         protected virtual void Awake()
         {
-            timer.Invoke();
             ChangeFlip(flipX, flipY);
         }
 
-        protected virtual void OnEnable()
+        protected virtual void OnDestroy()
         {
-            timer.Invoke();
+            //do nothing
         }
 
         private void Update()
         {
             isAnimated = true;
 
-            float lastTime = timer.GetTimeByThread(timeThread);
-            timer.Invoke();
-            float time = timer.GetTimeByThread(timeThread);
-
-            Animation(clip, time - lastTime);
+            var dt = timer.GetDeltaTime(m_timeThread);
+            Animation(clip, dt);
         }
 
         private void Animation(SpriteAnimationClip3000 clip, float deltaTime)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Spritesheet3000
@@ -8,23 +9,30 @@ namespace Spritesheet3000
         private static float _timeScale = 1f;
         public static float timeScale { get { return _timeScale; } set { _timeScale = value; } }
 
-        private Dictionary<ESpriteAnimatorThread, float> timesByThread = new Dictionary<ESpriteAnimatorThread, float>();
-
-        public SpriteAnimatorTimer3000()
+        public float GetTime(ESpriteAnimatorThread thread)
         {
-            timesByThread.Add(ESpriteAnimatorThread.RelatedOnTimeScale, 0);
-            timesByThread.Add(ESpriteAnimatorThread.UnscaledTime, 0);
+            switch (thread)
+            {
+                case ESpriteAnimatorThread.RelatedOnTimeScale:
+                    return Time.time;
+                case ESpriteAnimatorThread.UnscaledTime:
+                    return Time.unscaledTime;
+                default:
+                    throw new Exception($"unsupported type {thread}");
+            }
         }
 
-        public void Invoke()
+        public float GetDeltaTime(ESpriteAnimatorThread thread)
         {
-            timesByThread[ESpriteAnimatorThread.RelatedOnTimeScale] = Time.time;
-            timesByThread[ESpriteAnimatorThread.UnscaledTime] = Time.unscaledDeltaTime;
-        }
-
-        public float GetTimeByThread(ESpriteAnimatorThread thread)
-        {
-            return timesByThread[thread];
+            switch (thread)
+            {
+                case ESpriteAnimatorThread.RelatedOnTimeScale:
+                    return Time.deltaTime;
+                case ESpriteAnimatorThread.UnscaledTime:
+                    return Time.unscaledDeltaTime;
+                default:
+                    throw new Exception($"unsupported type {thread}");
+            }
         }
     }
 }
