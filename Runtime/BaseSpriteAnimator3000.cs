@@ -18,7 +18,6 @@ namespace Spritesheet3000
 
         protected abstract void SetRendererFlip(T renderer, bool flipX, bool flipY);
 
-        private int clipIdx = 0;
         public ESpriteAnimatorThread timeThread { get { return m_timeThread; } set { m_timeThread = value; } }
         public float timeScale { get { return m_timeScale; } set { m_timeScale = value; } }
         public float totalTimeScale { get { return m_timeScale * SpriteAnimatorTimer3000.timeScale; } }
@@ -60,11 +59,11 @@ namespace Spritesheet3000
 #if UNITY_EDITOR
         public int editorIndex { get { return clipIdx; } set { clipIdx = value; } }
 #endif
+        private int clipIdx = 0;
         private Action callback = null;
+        private bool isAnimated = false;
 
         private static readonly SpriteAnimatorTimer3000 timer = new SpriteAnimatorTimer3000();
-
-        private bool isAnimated = false;
 
         protected virtual void OnValidate()
         {

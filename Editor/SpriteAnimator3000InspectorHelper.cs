@@ -8,28 +8,47 @@ namespace Spritesheet3000.Editor
 {
     public static class SpriteAnimator3000InspectorHelper
     {
-        public static void OnInspectorDraw<T>(Object target, BaseSpriteAnimator3000<T> anim, ref float currentTime, ref string[] currentClipOptions)
+        private static readonly GUIContent _timeThreadLabel = new GUIContent("Time Thread");
+        private static readonly GUIContent _timeScaleLabel = new GUIContent("Time Scale");
+        private static readonly GUIContent _flipXLabel = new GUIContent("Flip X");
+        private static readonly GUIContent _flipYLabel = new GUIContent("Flip Y");
+
+        public static void OnInspectorDraw<T>(SerializedObject serializedObject, BaseSpriteAnimator3000<T> anim, ref float currentTime, ref string[] currentClipOptions)
         {
-            if (anim == null) return;
+            if (anim == null)
+                return;
+
             //serialized fields
             if (GUI.changed)
                 currentClipOptions = anim.EditorCreateClipsOptions();
 
-            anim.timeThread = (ESpriteAnimatorThread)EditorGUILayout.EnumPopup("Time Thread", anim.timeThread);
-            anim.timeScale = EditorGUILayout.FloatField("Time Scale", anim.timeScale);
-            anim.playInEditor = EditorGUILayout.ToggleLeft("Play in Editor", anim.playInEditor);
-            anim.flipX = EditorGUILayout.ToggleLeft("Flip X", anim.flipX);
-            anim.flipY = EditorGUILayout.ToggleLeft("Flip Y", anim.flipY);
+            var timeThreadProp = serializedObject.FindProperty("m_timeThread");
+            if (timeThreadProp != null)
+                EditorGUILayout.PropertyField(timeThreadProp, _timeThreadLabel);
+
+            var timeScaleProp = serializedObject.FindProperty("m_timeScale");
+            if (timeScaleProp != null)
+                EditorGUILayout.PropertyField(timeScaleProp, _timeScaleLabel);
+
+            var flipXProp = serializedObject.FindProperty("m_flip_x");
+            if (flipXProp != null)
+                EditorGUILayout.PropertyField(flipXProp, _flipXLabel);
+
+            var flipYProp = serializedObject.FindProperty("m_flip_y");
+            if (flipYProp != null)
+                EditorGUILayout.PropertyField(flipYProp, _flipYLabel);
+
+            anim.playInEditor = EditorGUILayout.Toggle("Play in Editor", anim.playInEditor);
             anim.editorIndex = EditorGUILayout.Popup("Clip", anim.editorIndex, currentClipOptions);
 
             if (!Application.isPlaying)
             {
                 if (GUI.changed)
                 {
-                    var prefabType = PrefabUtility.GetPrefabAssetType(target);
+                    var prefabType = PrefabUtility.GetPrefabAssetType(serializedObject.targetObject);
                     var isPrefab = prefabType != PrefabAssetType.NotAPrefab;
                     if (isPrefab)
-                        EditorUtility.SetDirty(target);
+                        EditorUtility.SetDirty(serializedObject.targetObject);
                     else
                         EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
                 }

@@ -33,7 +33,7 @@ namespace Spritesheet3000.Editor
         {
             base.OnInspectorGUI();
 
-            SpriteAnimator3000InspectorHelper.OnInspectorDraw(target, anim, ref currentTime, ref currentClipOptions);
+            SpriteAnimator3000InspectorHelper.OnInspectorDraw(serializedObject, anim, ref currentTime, ref currentClipOptions);
 
             serializedObject.ApplyModifiedProperties();
 
