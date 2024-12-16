@@ -310,6 +310,18 @@ namespace Spritesheet3000.Editor
             if (headerDict.TryGetValue("exportPixelsPerUnit", out var exportPixelsPerUnit))
                 pixelsPerUnit = int.Parse(exportPixelsPerUnit.ToString());
 
+            SpriteMeshType? spriteMeshType = null;
+            if (headerDict.TryGetValue("exportSpriteMeshType", out var exportSpriteMeshType))
+                spriteMeshType = (SpriteMeshType)Enum.Parse(typeof(SpriteMeshType), (string)exportSpriteMeshType);
+
+            Vector2? spritePivot = null;
+            if (headerDict.TryGetValue("exportSpritePivot", out var exportSpritePivot))
+            {
+                var jsonDict = (Dictionary<string, object>)exportSpritePivot;
+                var x = float.Parse(jsonDict["x"].ToString());
+                var y = float.Parse(jsonDict["y"].ToString());
+                spritePivot = new Vector2(x, y);
+            }
 
             TextureWrapMode? wrapMode = TextureWrapMode.Clamp;
             bool? mipmapsEnabled = false;
@@ -320,7 +332,9 @@ namespace Spritesheet3000.Editor
                 filterMode = filterMode,
                 importerCompression = importerCompression,
                 wrapMode = wrapMode,
-                pixelPerUnit = pixelsPerUnit,
+                pixelsPerUnit = pixelsPerUnit,
+                spriteMeshType = spriteMeshType,
+                spritePivot = spritePivot,
                 mipmapsEnabled = mipmapsEnabled,
                 alphaIsTransparency = alphaIsTransparency,
 
@@ -376,7 +390,9 @@ namespace Spritesheet3000.Editor
                 filterMode = exportOptions.filterMode,
                 importerCompression = exportOptions.importerCompression,
                 wrapMode = exportOptions.wrapMode,
-                pixelPerUnit = exportOptions.pixelPerUnit,
+                pixelsPerUnit = exportOptions.pixelsPerUnit,
+                spriteMeshType = exportOptions.spriteMeshType,
+                spritePivot = exportOptions.spritePivot,
                 mipmapsEnabled = exportOptions.mipmapsEnabled,
                 alphaIsTransparency = exportOptions.alphaIsTransparency,
                 spriteAtlas = new SpriteAnimationClip3000.ExportWorker.SpriteAtlas

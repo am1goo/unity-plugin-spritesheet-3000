@@ -15,7 +15,6 @@ namespace Spritesheet3000
         [SerializeField] private SpriteAtlas m_spriteAtlas;
         [SerializeField, HideInInspector] private float m_length;
         [SerializeField, HideInInspector] private List<string> m_spritesName = new List<string>();
-        [SerializeField, HideInInspector] private List<SpriteAnimationParameter3000> m_spritesParameters = new List<SpriteAnimationParameter3000>();
         [SerializeField, HideInInspector] private List<SpriteAnimationFrameRange3000> m_framesRange = new List<SpriteAnimationFrameRange3000>();
         [SerializeField, HideInInspector] private List<SpriteAnimationFrame3000> m_frames = new List<SpriteAnimationFrame3000>();
 
@@ -237,7 +236,6 @@ namespace Spritesheet3000
                 var entry = new EditorAtlasEntry(origin);
                 m_atlasEntries.Add(entry);
                 m_spritesName.Add(spriteName);
-                m_spritesParameters.Add(new SpriteAnimationParameter3000(origin.pivot));
             }
             else
             {
@@ -354,7 +352,9 @@ namespace Spritesheet3000
             public FilterMode? filterMode;
             public TextureImporterCompression? importerCompression;
             public TextureWrapMode? wrapMode;
-            public int? pixelPerUnit;
+            public int? pixelsPerUnit;
+            public SpriteMeshType? spriteMeshType;
+            public Vector3? spritePivot;
             public bool? mipmapsEnabled;
             public bool? alphaIsTransparency;
             public SpriteAtlas spriteAtlas;
@@ -362,6 +362,9 @@ namespace Spritesheet3000
             public void Apply(string pathInAssets)
             {
                 var texImporter = AssetImporter.GetAtPath(pathInAssets) as TextureImporter;
+
+                var texSettings = new TextureImporterSettings();
+                texImporter.ReadTextureSettings(texSettings);
 
                 bool saveAndReimport = false;
 
@@ -392,11 +395,30 @@ namespace Spritesheet3000
                     }
                 }
 
-                if (pixelPerUnit.HasValue)
+                if (pixelsPerUnit.HasValue)
                 {
-                    if (texImporter.spritePixelsPerUnit != pixelPerUnit)
+                    if (texImporter.spritePixelsPerUnit != pixelsPerUnit)
                     {
-                        texImporter.spritePixelsPerUnit = pixelPerUnit.Value;
+                        texImporter.spritePixelsPerUnit = pixelsPerUnit.Value;
+                        saveAndReimport |= true;
+                    }
+                }
+
+                if (spriteMeshType.HasValue)
+                {
+                    if (texSettings.spriteMeshType != spriteMeshType)
+                    {
+                        texSettings.spriteMeshType = spriteMeshType.Value;
+                        texImporter.SetTextureSettings(texSettings);
+                        saveAndReimport |= true;
+                    }
+                }
+
+                if (spritePivot.HasValue)
+                {
+                    if (texImporter.spritePivot != spritePivot)
+                    {
+                        texImporter.spritePivot = spritePivot.Value;
                         saveAndReimport |= true;
                     }
                 }

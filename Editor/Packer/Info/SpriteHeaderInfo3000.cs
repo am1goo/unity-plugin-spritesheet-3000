@@ -34,7 +34,9 @@ namespace Spritesheet3000.Editor
             public FilterMode? filterMode;
             public TextureImporterCompression? importerCompression;
             public TextureWrapMode? wrapMode;
-            public int? pixelPerUnit;
+            public int? pixelsPerUnit;
+            public SpriteMeshType? spriteMeshType;
+            public Vector3? spritePivot;
             public bool? mipmapsEnabled;
             public bool? alphaIsTransparency;
             public SpriteAtlas spriteAtlas;
@@ -58,7 +60,9 @@ namespace Spritesheet3000.Editor
                 return "[filterMode=" + filterMode +
                 ", importerCompression=" + importerCompression +
                 ", wrapMode=" + wrapMode +
-                ", pixelPerUnit=" + pixelPerUnit +
+                ", pixelsPerUnit=" + pixelsPerUnit +
+                ", spriteMeshType=" + spriteMeshType +
+                ", spritePivot=" + spritePivot +
                 ", mipmapsEnabled=" + mipmapsEnabled +
                 ", alphaIsTransparency=" + alphaIsTransparency +
                 ", spriteAtlas=" + spriteAtlas +
