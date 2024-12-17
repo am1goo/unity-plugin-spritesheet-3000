@@ -37,6 +37,7 @@ namespace Spritesheet3000.Editor
             public int? pixelsPerUnit;
             public SpriteMeshType? spriteMeshType;
             public Vector3? spritePivot;
+            public SpriteAlignment? spriteAlignment;
             public bool? mipmapsEnabled;
             public bool? alphaIsTransparency;
             public SpriteAtlas spriteAtlas;
@@ -63,6 +64,7 @@ namespace Spritesheet3000.Editor
                 ", pixelsPerUnit=" + pixelsPerUnit +
                 ", spriteMeshType=" + spriteMeshType +
                 ", spritePivot=" + spritePivot +
+                ", spriteAlignment=" + spriteAlignment +
                 ", mipmapsEnabled=" + mipmapsEnabled +
                 ", alphaIsTransparency=" + alphaIsTransparency +
                 ", spriteAtlas=" + spriteAtlas +

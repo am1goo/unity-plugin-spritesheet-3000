@@ -355,6 +355,7 @@ namespace Spritesheet3000
             public int? pixelsPerUnit;
             public SpriteMeshType? spriteMeshType;
             public Vector3? spritePivot;
+            public SpriteAlignment? spriteAlignment;
             public bool? mipmapsEnabled;
             public bool? alphaIsTransparency;
             public SpriteAtlas spriteAtlas;
@@ -419,6 +420,17 @@ namespace Spritesheet3000
                     if (texImporter.spritePivot != spritePivot)
                     {
                         texImporter.spritePivot = spritePivot.Value;
+                        saveAndReimport |= true;
+                    }
+                }
+
+                if (spriteAlignment.HasValue)
+                {
+                    var spriteAlignmentInt = (int)spriteAlignment.Value;
+                    if (texSettings.spriteAlignment != spriteAlignmentInt)
+                    {
+                        texSettings.spriteAlignment = spriteAlignmentInt;
+                        texImporter.SetTextureSettings(texSettings);
                         saveAndReimport |= true;
                     }
                 }

@@ -315,12 +315,14 @@ namespace Spritesheet3000.Editor
                 spriteMeshType = (SpriteMeshType)Enum.Parse(typeof(SpriteMeshType), (string)exportSpriteMeshType);
 
             Vector2? spritePivot = null;
+            SpriteAlignment? spriteAlignment = null;
             if (headerDict.TryGetValue("exportSpritePivot", out var exportSpritePivot))
             {
                 var jsonDict = (Dictionary<string, object>)exportSpritePivot;
                 var x = float.Parse(jsonDict["x"].ToString());
                 var y = float.Parse(jsonDict["y"].ToString());
                 spritePivot = new Vector2(x, y);
+                spriteAlignment = GetSpriteAlignment(spritePivot.Value);
             }
 
             TextureWrapMode? wrapMode = TextureWrapMode.Clamp;
@@ -335,6 +337,7 @@ namespace Spritesheet3000.Editor
                 pixelsPerUnit = pixelsPerUnit,
                 spriteMeshType = spriteMeshType,
                 spritePivot = spritePivot,
+                spriteAlignment = spriteAlignment,
                 mipmapsEnabled = mipmapsEnabled,
                 alphaIsTransparency = alphaIsTransparency,
 
@@ -393,6 +396,7 @@ namespace Spritesheet3000.Editor
                 pixelsPerUnit = exportOptions.pixelsPerUnit,
                 spriteMeshType = exportOptions.spriteMeshType,
                 spritePivot = exportOptions.spritePivot,
+                spriteAlignment = exportOptions.spriteAlignment,
                 mipmapsEnabled = exportOptions.mipmapsEnabled,
                 alphaIsTransparency = exportOptions.alphaIsTransparency,
                 spriteAtlas = new SpriteAnimationClip3000.ExportWorker.SpriteAtlas
@@ -471,6 +475,71 @@ namespace Spritesheet3000.Editor
             }
 
             return existingAsset;
+        }
+
+        private static SpriteAlignment GetSpriteAlignment(Vector2 spritePivot)
+        {
+            if (Mathf.Approximately(spritePivot.x, 0.0f))
+            {
+                if (Mathf.Approximately(spritePivot.y, 1.0f))
+                {
+                    return SpriteAlignment.TopLeft;
+                }
+                else if (Mathf.Approximately(spritePivot.y, 0.5f))
+                {
+                    return SpriteAlignment.LeftCenter;
+                }
+                else if (Mathf.Approximately(spritePivot.y, 0.0f))
+                {
+                    return SpriteAlignment.BottomLeft;
+                }
+                else
+                {
+                    return SpriteAlignment.Custom;
+                }
+            }
+            else if (Mathf.Approximately(spritePivot.x, 0.5f))
+            {
+                if (Mathf.Approximately(spritePivot.y, 1.0f))
+                {
+                    return SpriteAlignment.TopCenter;
+                }
+                else if (Mathf.Approximately(spritePivot.y, 0.5f))
+                {
+                    return SpriteAlignment.Center;
+                }
+                else if (Mathf.Approximately(spritePivot.y, 0.0f))
+                {
+                    return SpriteAlignment.BottomCenter;
+                }
+                else
+                {
+                    return SpriteAlignment.Custom;
+                }
+            }
+            else if (Mathf.Approximately(spritePivot.x, 1.0f))
+            {
+                if (Mathf.Approximately(spritePivot.y, 1.0f))
+                {
+                    return SpriteAlignment.TopRight;
+                }
+                else if (Mathf.Approximately(spritePivot.y, 0.5f))
+                {
+                    return SpriteAlignment.RightCenter;
+                }
+                else if (Mathf.Approximately(spritePivot.y, 0.0f))
+                {
+                    return SpriteAlignment.BottomRight;
+                }
+                else
+                {
+                    return SpriteAlignment.Custom;
+                }
+            }
+            else
+            {
+                return SpriteAlignment.Custom;
+            }
         }
     }
 }
