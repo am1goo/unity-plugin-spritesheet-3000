@@ -371,9 +371,9 @@ namespace Spritesheet3000
 
                 if (filterMode.HasValue)
                 {
-                    if (texImporter.filterMode != filterMode)
+                    if (texSettings.filterMode != filterMode)
                     {
-                        texImporter.filterMode = filterMode.Value;
+                        texSettings.filterMode = filterMode.Value;
                         saveAndReimport |= true;
                     }
                 }
@@ -389,18 +389,18 @@ namespace Spritesheet3000
 
                 if (wrapMode.HasValue)
                 {
-                    if (texImporter.wrapMode != wrapMode)
+                    if (texSettings.wrapMode != wrapMode)
                     {
-                        texImporter.wrapMode = wrapMode.Value;
+                        texSettings.wrapMode = wrapMode.Value;
                         saveAndReimport |= true;
                     }
                 }
 
                 if (pixelsPerUnit.HasValue)
                 {
-                    if (texImporter.spritePixelsPerUnit != pixelsPerUnit)
+                    if (texSettings.spritePixelsPerUnit != pixelsPerUnit)
                     {
-                        texImporter.spritePixelsPerUnit = pixelsPerUnit.Value;
+                        texSettings.spritePixelsPerUnit = pixelsPerUnit.Value;
                         saveAndReimport |= true;
                     }
                 }
@@ -410,16 +410,15 @@ namespace Spritesheet3000
                     if (texSettings.spriteMeshType != spriteMeshType)
                     {
                         texSettings.spriteMeshType = spriteMeshType.Value;
-                        texImporter.SetTextureSettings(texSettings);
                         saveAndReimport |= true;
                     }
                 }
 
                 if (spritePivot.HasValue)
                 {
-                    if (texImporter.spritePivot != spritePivot)
+                    if (texSettings.spritePivot != spritePivot)
                     {
-                        texImporter.spritePivot = spritePivot.Value;
+                        texSettings.spritePivot = spritePivot.Value;
                         saveAndReimport |= true;
                     }
                 }
@@ -430,31 +429,33 @@ namespace Spritesheet3000
                     if (texSettings.spriteAlignment != spriteAlignmentInt)
                     {
                         texSettings.spriteAlignment = spriteAlignmentInt;
-                        texImporter.SetTextureSettings(texSettings);
                         saveAndReimport |= true;
                     }
                 }
 
                 if (mipmapsEnabled.HasValue)
                 {
-                    if (texImporter.mipmapEnabled != mipmapsEnabled)
+                    if (texSettings.mipmapEnabled != mipmapsEnabled)
                     {
-                        texImporter.mipmapEnabled = mipmapsEnabled.Value;
+                        texSettings.mipmapEnabled = mipmapsEnabled.Value;
                         saveAndReimport |= true;
                     }
                 }
 
                 if (alphaIsTransparency.HasValue)
                 {
-                    if (texImporter.alphaIsTransparency != alphaIsTransparency)
+                    if (texSettings.alphaIsTransparency != alphaIsTransparency)
                     {
-                        texImporter.alphaIsTransparency = alphaIsTransparency.Value;
+                        texSettings.alphaIsTransparency = alphaIsTransparency.Value;
                         saveAndReimport |= true;
                     }
                 }
 
                 if (saveAndReimport)
+                {
+                    texImporter.SetTextureSettings(texSettings);
                     texImporter.SaveAndReimport();
+                }
             }
 
             public struct SpriteAtlas
