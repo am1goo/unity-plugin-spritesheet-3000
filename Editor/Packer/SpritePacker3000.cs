@@ -417,8 +417,23 @@ namespace Spritesheet3000.Editor
                 Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
                 if (sprite == null)
                 {
-                    Debug.LogError($"[SpritePacker3000] Pack: sprite not found at path {spritePath}");
-                    continue;
+                    Texture2D tex = AssetDatabase.LoadAssetAtPath<Texture2D>(spritePath);
+                    if (tex != null)
+                    {
+                        var texImporter = AssetImporter.GetAtPath(spritePath) as TextureImporter;
+                        if (texImporter.textureType != TextureImporterType.Sprite)
+                        {
+                            texImporter.textureType = TextureImporterType.Sprite;
+                            texImporter.SaveAndReimport();
+                        }
+                        sprite = AssetDatabase.LoadAssetAtPath<Sprite>(spritePath);
+                    }
+                    
+                    if (sprite == null)
+                    { 
+                        Debug.LogError($"[SpritePacker3000] Pack: sprite not found at path {spritePath}");
+                        continue;
+                    }
                 }
                 clip.EditorAddToAtlas(sprite, frameInfo.playbackTime, exportWorker);
             }
