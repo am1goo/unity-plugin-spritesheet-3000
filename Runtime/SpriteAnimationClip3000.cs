@@ -104,6 +104,7 @@ namespace Spritesheet3000
                 if (m_sprites == null)
                 {
 #if UNITY_EDITOR
+                    var available = true;
                     switch (EditorSettings.spritePackerMode)
                     {
                         case SpritePackerMode.BuildTimeOnlyAtlas:
@@ -114,9 +115,14 @@ namespace Spritesheet3000
                         case SpritePackerMode.AlwaysOnAtlas:
                             //do nothing, this SpriteAtlas packed already
                             break;
+
+                        case SpritePackerMode.Disabled:
+                            //shouble be return null, because no one sprite available
+                            available = false;
+                            break;
                     }
 #endif
-                    if (m_spriteAtlas != null)
+                    if (available && m_spriteAtlas != null)
                     {
                         m_spritesLength = m_spriteAtlas.spriteCount;
                         m_sprites = new Sprite[m_spritesLength];

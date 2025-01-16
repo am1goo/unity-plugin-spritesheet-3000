@@ -48,20 +48,35 @@ namespace Spritesheet3000
             }
         }
 
-        public bool playInEditor { get; set; }
+        private bool _playInEditor;
+        public bool playInEditor { get => _playInEditor; set => _playInEditor = value; }
 
-        public float clipTime { get; private set; }
-        public int clipIndex { get { return clipIdx; } }
+        private float _clipTime;
+        public float clipTime => _clipTime;
+
+        private int _clipIndex = 0;
+        public int clipIndex => _clipIndex;
+
         public SpriteAnimationClip3000 clip { get { return GetClipInternal(clipIndex); } }
         public string clipName { get { return clip?.name; } }
         public float clipLength { get { return clip?.GetLength(totalTimeScale) ?? 0; } }
-        public float normalizedTime { get { return clipTime / clipLength; } }
+        public float normalizedTime
+        {
+            get
+            {
+                var l = clipLength;
+                if (l > 0)
+                    return _clipTime / clipLength;
+                else
+                    return 0f;
+            }
+        }
 #if UNITY_EDITOR
-        public int editorIndex { get { return clipIdx; } set { clipIdx = value; } }
+        public int editorIndex { get { return _clipIndex; } set { _clipIndex = value; } }
 #endif
-        private int clipIdx = 0;
-        private Action callback = null;
-        private bool isAnimated = false;
+
+        private Action _callback = null;
+        private bool _isAnimated = false;
 
         private static readonly SpriteAnimatorTimer3000 timer = new SpriteAnimatorTimer3000();
 
@@ -83,7 +98,7 @@ namespace Spritesheet3000
 
         private void Update()
         {
-            isAnimated = true;
+            _isAnimated = true;
 
             var dt = timer.GetDeltaTime(m_timeThread);
             Animation(clip, dt);
@@ -98,14 +113,14 @@ namespace Spritesheet3000
             Sprite sprite = SampleByNormalizedTime(clip, normalizedTime);
             ChangeSprite(sprite);
 
-            clipTime += dt;
-            if (clipTime >= clipLength)
+            _clipTime += dt;
+            if (_clipTime >= clipLength)
             {
-                clipTime = 0;
-                if (callback != null)
+                _clipTime = 0;
+                if (_callback != null)
                 {
-                    callback();
-                    callback = null;
+                    _callback();
+                    _callback = null;
                 }
             }
         }
@@ -166,18 +181,12 @@ namespace Spritesheet3000
 
         private bool ChangeClipIndex(string clipName)
         {
-            if (callback != null)
-            {
-                //do nothing
-                callback = null;
-            }
-
             int idx = GetClipIndex(clipName);
             if (idx == -1)
                 return false;
 
-            clipIdx = idx;
-            clipTime = 0;
+            _clipIndex = idx;
+            _clipTime = 0;
             return true;
         }
 
@@ -219,10 +228,10 @@ namespace Spritesheet3000
             if (!res)
                 return false;
 
-            if (!isAnimated)
+            if (!_isAnimated)
                 Animation(clip, 0);
 
-            this.callback = callback;
+            this._callback = callback;
             return true;
         }
 
@@ -293,9 +302,22 @@ namespace Spritesheet3000
 
             if (playInEditor)
             {
-                float deltaTime = Time.realtimeSinceStartup - lastRealtimeSinceStartup;
-                Animation(clip, deltaTime);
-                lastRealtimeSinceStartup = Time.realtimeSinceStartup;
+                if (UnityEditor.EditorSettings.spritePackerMode != UnityEditor.SpritePackerMode.Disabled)
+                {
+                    float deltaTime = Time.realtimeSinceStartup - lastRealtimeSinceStartup;
+                    Animation(clip, deltaTime);
+                    lastRealtimeSinceStartup = Time.realtimeSinceStartup;
+                }
+                else
+                {
+                    playInEditor = false;
+
+                    const string url = "https://docs.unity3d.com/es/Manual/SpritePackerModes.html";
+                    if (UnityEditor.EditorUtility.DisplayDialog("Error", $"SpritePacker is disabled. Please go to the official documentation: {url}", "Go to Documentation", "I've got it!"))
+                    {
+                        Application.OpenURL(url);
+                    }
+                }
             }
         }
 
