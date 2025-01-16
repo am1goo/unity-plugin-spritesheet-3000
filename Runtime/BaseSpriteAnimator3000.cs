@@ -24,6 +24,10 @@ namespace Spritesheet3000
 
         [SerializeField]
         [HideInInspector]
+        private bool m_randomStart;
+
+        [SerializeField]
+        [HideInInspector]
         private bool m_flip_x = false;
         public bool flipX
         {
@@ -47,7 +51,7 @@ namespace Spritesheet3000
                 ChangeFlip(m_flip_x, m_flip_y);
             }
         }
-
+        
         private bool _playInEditor;
         public bool playInEditor { get => _playInEditor; set => _playInEditor = value; }
 
@@ -91,6 +95,16 @@ namespace Spritesheet3000
             ChangeFlip(flipX, flipY);
         }
 
+        protected virtual void Start()
+        {
+            if (m_randomStart)
+            {
+                var l = clipLength;
+                if (l > 0)
+                    _clipTime = UnityEngine.Random.Range(0f, l);
+            }
+        }
+
         protected virtual void OnDestroy()
         {
             //do nothing
@@ -106,17 +120,18 @@ namespace Spritesheet3000
 
         private void Animation(SpriteAnimationClip3000 clip, float deltaTime)
         {
-            float dt = deltaTime;
-            if (dt < 0)
+            if (deltaTime < 0)
                 return;
 
             Sprite sprite = SampleByNormalizedTime(clip, normalizedTime);
             ChangeSprite(sprite);
 
-            _clipTime += dt;
-            if (_clipTime >= clipLength)
+            _clipTime += deltaTime;
+
+            var l = clipLength;
+            if (_clipTime >= l)
             {
-                _clipTime = 0;
+                _clipTime = Mathf.Repeat(_clipTime, l);
                 if (_callback != null)
                 {
                     _callback();

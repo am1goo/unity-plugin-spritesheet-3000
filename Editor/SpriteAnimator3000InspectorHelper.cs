@@ -2,7 +2,6 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
-using Spritesheet3000;
 
 namespace Spritesheet3000.Editor
 {
@@ -12,6 +11,7 @@ namespace Spritesheet3000.Editor
         private static readonly GUIContent _timeScaleLabel = new GUIContent("Time Scale");
         private static readonly GUIContent _flipXLabel = new GUIContent("Flip X");
         private static readonly GUIContent _flipYLabel = new GUIContent("Flip Y");
+        private static readonly GUIContent _randomStartLabel = new GUIContent("Random Start");
 
         public static void OnInspectorDraw<T>(SerializedObject serializedObject, BaseSpriteAnimator3000<T> anim, ref float currentTime, ref string[] currentClipOptions)
         {
@@ -29,6 +29,10 @@ namespace Spritesheet3000.Editor
             var timeScaleProp = serializedObject.FindProperty("m_timeScale");
             if (timeScaleProp != null)
                 EditorGUILayout.PropertyField(timeScaleProp, _timeScaleLabel);
+
+            var randomStartProp = serializedObject.FindProperty("m_randomStart");
+            if (randomStartProp != null)
+                EditorGUILayout.PropertyField(randomStartProp, _randomStartLabel);
 
             var flipXProp = serializedObject.FindProperty("m_flip_x");
             if (flipXProp != null)
