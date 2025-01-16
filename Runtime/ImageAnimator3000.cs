@@ -28,5 +28,25 @@ namespace Spritesheet3000
         {
             //do nothing
         }
+
+#if UNITY_EDITOR
+        [UnityEditor.MenuItem("Assets/Create/UI/Spritesheet 3000/Image Animator", validate = false)]
+        [UnityEditor.MenuItem("GameObject/UI/Spritesheet 3000/Image Animator", validate = false)]
+        private static void EditorCreateAsset()
+        {
+            EditorCreateAsset<ImageAnimator3000>((obj) =>
+            {
+                obj.m_spritesheets = new List<SpriteAnimationClip3000>();
+                obj.timeThread = ESpriteAnimatorThread.UnscaledTime;
+
+                var canvasRenderer = obj.gameObject.AddComponent<CanvasRenderer>();
+
+                var image = obj.gameObject.AddComponent<Image>();
+                image.sprite = UnityEditor.AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
+                image.type = UnityEngine.UI.Image.Type.Sliced;
+                return image;
+            });
+        }
+#endif
     }
 }

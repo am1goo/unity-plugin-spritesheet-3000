@@ -341,6 +341,22 @@ namespace Spritesheet3000
                 spritesheet.EditorRefresh();
             }
         }
+
+        protected static void EditorCreateAsset<A>(Func<A, T> func) where A : BaseSpriteAnimator3000<T>
+        {
+            var obj = new GameObject(typeof(A).Name);
+
+            var animator = obj.AddComponent<A>();
+            animator.m_renderer = func(animator);
+            animator.m_copyRenderers = new List<T>();
+
+            var activeObject = UnityEditor.Selection.activeGameObject;
+            var activeParent = activeObject != null ? activeObject.transform : null;
+            obj.transform.SetParent(activeParent);
+            obj.transform.localPosition = Vector3.zero;
+
+            UnityEditor.Selection.activeGameObject = obj;
+        }
 #endif
     }
 }
