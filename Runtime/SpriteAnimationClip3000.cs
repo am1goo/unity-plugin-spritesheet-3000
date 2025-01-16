@@ -103,23 +103,14 @@ namespace Spritesheet3000
 #endif
                 if (m_sprites == null)
                 {
-#if UNITY_EDITOR
                     var available = true;
-                    switch (EditorSettings.spritePackerMode)
+#if UNITY_EDITOR
+                    available &= EditorSettings.spritePackerMode != SpritePackerMode.Disabled;
+                    if (m_spriteAtlas != null)
                     {
-                        case SpritePackerMode.BuildTimeOnlyAtlas:
-                            if (m_spriteAtlas != null)
-                                SpriteAtlasUtility.PackAtlases(new[] { m_spriteAtlas }, EditorUserBuildSettings.activeBuildTarget, canCancel: false);
-                            break;
-
-                        case SpritePackerMode.AlwaysOnAtlas:
-                            //do nothing, this SpriteAtlas packed already
-                            break;
-
-                        case SpritePackerMode.Disabled:
-                            //shouble be return null, because no one sprite available
-                            available = false;
-                            break;
+                        var packables = m_spriteAtlas.GetPackables();
+                        if (m_spriteAtlas.spriteCount != packables.Length)
+                            SpriteAtlasUtility.PackAtlases(new[] { m_spriteAtlas }, EditorUserBuildSettings.activeBuildTarget, canCancel: false);
                     }
 #endif
                     if (available && m_spriteAtlas != null)

@@ -43,7 +43,7 @@ namespace Spritesheet3000
 
                 var image = obj.gameObject.AddComponent<Image>();
                 image.sprite = UnityEditor.AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
-                image.type = UnityEngine.UI.Image.Type.Sliced;
+                image.type = Image.Type.Simple;
                 return image;
             });
         }
