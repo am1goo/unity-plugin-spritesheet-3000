@@ -3,6 +3,9 @@
     "version": "0.4.14",
     "displayName": "Spritesheet 3000",
     "description": "Spritesheet 3000 Plugin for Unity",
+    "dependencies": {
+      "com.unity.ugui": "1.0.0"
+    },
     "unity": "2020.3",
     "license": "MIT",
     "licensesUrl": "https://raw.githubusercontent.com/am1goo/unity-plugin-spritesheet-3000/master/LICENSE",
