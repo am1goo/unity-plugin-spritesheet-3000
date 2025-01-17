@@ -131,7 +131,7 @@ namespace Spritesheet3000
             var l = clipLength;
             if (_clipTime >= l)
             {
-                _clipTime = Mathf.Repeat(_clipTime, l);
+                _clipTime = l > 0f ? Mathf.Repeat(_clipTime, l) : 0f;
                 if (_callback != null)
                 {
                     _callback();
