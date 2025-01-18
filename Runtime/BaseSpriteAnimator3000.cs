@@ -229,6 +229,20 @@ namespace Spritesheet3000
             return PlayInternal(clipName, immediately: false, callback);
         }
 
+        public bool PlayForce(SpriteAnimationClip3000 clip, Action callback = null)
+        {
+            if (clip == null)
+                return false;
+
+            var spritesheets = GetSpritesheets();
+            if (!spritesheets.Contains(clip))
+            {
+                spritesheets.Add(clip);
+            }
+
+            return PlayForce(clip.name, callback);
+        }
+
         public bool PlayForce(string clipName, Action callback = null)
         {
             return PlayInternal(clipName, immediately: true, callback);
