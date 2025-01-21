@@ -80,7 +80,6 @@ namespace Spritesheet3000
 #endif
 
         private Action _callback = null;
-        private bool _isAnimated = false;
 
         private static readonly SpriteAnimatorTimer3000 timer = new SpriteAnimatorTimer3000();
 
@@ -112,8 +111,6 @@ namespace Spritesheet3000
 
         private void Update()
         {
-            _isAnimated = true;
-
             var dt = timer.GetDeltaTime(m_timeThread);
             Animation(clip, dt);
         }
@@ -202,7 +199,13 @@ namespace Spritesheet3000
 
             _clipIndex = idx;
             _clipTime = 0;
+            OnClipChanged(clip);
             return true;
+        }
+
+        protected virtual void OnClipChanged(SpriteAnimationClip3000 clip)
+        {
+            //do nothing
         }
 
         public void Clear()
@@ -257,8 +260,7 @@ namespace Spritesheet3000
             if (!res)
                 return false;
 
-            if (!_isAnimated)
-                Animation(clip, 0);
+            Animation(clip, 0);
 
             this._callback = callback;
             return true;
