@@ -26,6 +26,17 @@ namespace Spritesheet3000
             m_sprites = null;
         }
 
+        private string _cachedName;
+        public string cachedName
+        {
+            get
+            {
+                if (_cachedName == null)
+                    _cachedName = this.name;
+                return _cachedName;
+            }
+        }
+
         public SpriteAtlas spriteAtlas { get { return m_spriteAtlas; } }
         public int framesCount { get { return m_frames.Count; } }
         public float length { get { return m_length; } }

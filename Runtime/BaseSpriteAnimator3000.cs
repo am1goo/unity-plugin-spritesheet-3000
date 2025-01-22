@@ -62,7 +62,7 @@ namespace Spritesheet3000
         public int clipIndex => _clipIndex;
 
         public SpriteAnimationClip3000 clip { get { return GetClipInternal(clipIndex); } }
-        public string clipName { get { return clip?.name; } }
+        public string clipName { get { return clip?.cachedName; } }
         public float clipLength { get { return clip?.GetLength(totalTimeScale) ?? 0; } }
         public float normalizedTime
         {
@@ -218,13 +218,16 @@ namespace Spritesheet3000
             if (clip == null)
                 return false;
 
+            UnityEngine.Profiling.Profiler.BeginSample("Play");
             var spritesheets = GetSpritesheets();
             if (!spritesheets.Contains(clip))
             {
                 spritesheets.Add(clip);
             }
 
-            return Play(clip.name, callback);
+            var changed = Play(clip.cachedName, callback);
+            UnityEngine.Profiling.Profiler.EndSample();
+            return changed;
         }
 
         public bool Play(string clipName, Action callback = null)
@@ -237,13 +240,16 @@ namespace Spritesheet3000
             if (clip == null)
                 return false;
 
+            UnityEngine.Profiling.Profiler.BeginSample("PlayForce");
             var spritesheets = GetSpritesheets();
             if (!spritesheets.Contains(clip))
             {
                 spritesheets.Add(clip);
             }
 
-            return PlayForce(clip.name, callback);
+            var changed = PlayForce(clip.cachedName, callback);
+            UnityEngine.Profiling.Profiler.EndSample();
+            return changed;
         }
 
         public bool PlayForce(string clipName, Action callback = null)
@@ -275,7 +281,7 @@ namespace Spritesheet3000
                 if (spritesheet == null)
                     continue;
 
-                if (spritesheet.name == clipName)
+                if (spritesheet.cachedName == clipName)
                 {
                     return i;
                 }
@@ -376,7 +382,7 @@ namespace Spritesheet3000
                     if (spritesheet == null)
                         continue;
 
-                    clipIndexes.Add(spritesheet.name);
+                    clipIndexes.Add(spritesheet.cachedName);
                 }
             }
             return clipIndexes.ToArray();
