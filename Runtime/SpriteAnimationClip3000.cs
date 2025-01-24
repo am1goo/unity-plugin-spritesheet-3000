@@ -31,9 +31,16 @@ namespace Spritesheet3000
         {
             get
             {
-                if (_cachedName == null)
-                    _cachedName = this.name;
-                return _cachedName;
+                if (Application.isPlaying)
+                {
+                    if (_cachedName == null)
+                        _cachedName = this.name;
+                    return _cachedName;
+                }
+                else
+                {
+                    return this.name;
+                }
             }
         }
 
@@ -176,7 +183,6 @@ namespace Spritesheet3000
         }
 
 #if UNITY_EDITOR
-        public static readonly string[] EDITOR_EMPTY_CLIP_OPTIONS = new string[0];
         private List<EditorAtlasEntry> m_atlasEntries = new List<EditorAtlasEntry>();
 
         public void EditorRefresh()

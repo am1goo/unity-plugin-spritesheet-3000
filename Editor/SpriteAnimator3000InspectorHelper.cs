@@ -19,7 +19,7 @@ namespace Spritesheet3000.Editor
                 return;
 
             //serialized fields
-            if (GUI.changed)
+            if (GUI.changed || currentClipOptions == null)
                 currentClipOptions = anim.EditorCreateClipsOptions();
 
             var timeThreadProp = serializedObject.FindProperty("m_timeThread");

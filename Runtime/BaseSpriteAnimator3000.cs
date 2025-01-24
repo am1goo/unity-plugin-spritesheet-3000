@@ -75,9 +75,6 @@ namespace Spritesheet3000
                     return 0f;
             }
         }
-#if UNITY_EDITOR
-        public int editorIndex { get { return _clipIndex; } set { _clipIndex = value; } }
-#endif
 
         private Action _callback = null;
 
@@ -331,6 +328,18 @@ namespace Spritesheet3000
         }
 
 #if UNITY_EDITOR
+        public int editorIndex
+        {
+            get
+            {
+                return _clipIndex;
+            }
+            set
+            {
+                _clipIndex = value;
+            }
+        }
+
         private float lastRealtimeSinceStartup = 0;
         public void EditorUpdate()
         {
@@ -370,9 +379,9 @@ namespace Spritesheet3000
             ChangeSprite(sprite);
         }
 
-        public string[] EditorCreateClipsOptions()
+        public virtual string[] EditorCreateClipsOptions()
         {
-            var clipIndexes = new List<string>();
+            var clipNames = new List<string>();
             var spritesheets = GetSpritesheets();
             if (spritesheets != null)
             {
@@ -382,10 +391,10 @@ namespace Spritesheet3000
                     if (spritesheet == null)
                         continue;
 
-                    clipIndexes.Add(spritesheet.cachedName);
+                    clipNames.Add(spritesheet.name);
                 }
             }
-            return clipIndexes.ToArray();
+            return clipNames.ToArray();
         }
 
         public void EditorRefresh()

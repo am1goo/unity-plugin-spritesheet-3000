@@ -6,22 +6,20 @@ namespace Spritesheet3000.Editor
     [CustomEditor(typeof(SpriteAnimator3000))]
     public class SpriteAnimator3000Inspector : UnityEditor.Editor
     {
-        private SpriteAnimator3000 anim;
+        private SpriteAnimator3000 _anim;
 
-        private string[] currentClipOptions = SpriteAnimationClip3000.EDITOR_EMPTY_CLIP_OPTIONS;
-        private float currentTime;
+        private string[] _currentClipOptions;
+        private float _currentTime;
 
         private void OnEnable()
         {
-            anim = target as SpriteAnimator3000;
-            anim.EditorRefresh();
-            currentTime = 0;
-            currentClipOptions = anim.EditorCreateClipsOptions();
+            _anim = target as SpriteAnimator3000;
+            _anim.EditorRefresh();
         }
 
         private void OnDisable()
         {
-            anim = null;
+            _anim = null;
         }
 
         public override bool RequiresConstantRepaint()
@@ -33,7 +31,7 @@ namespace Spritesheet3000.Editor
         {
             base.OnInspectorGUI();
 
-            SpriteAnimator3000InspectorHelper.OnInspectorDraw(serializedObject, anim, ref currentTime, ref currentClipOptions);
+            SpriteAnimator3000InspectorHelper.OnInspectorDraw(serializedObject, _anim, ref _currentTime, ref _currentClipOptions);
 
             serializedObject.ApplyModifiedProperties();
 
@@ -45,9 +43,9 @@ namespace Spritesheet3000.Editor
             if (Application.isPlaying)
                 return;
 
-            if (anim.playInEditor)
+            if (_anim.playInEditor)
             {
-                anim.EditorUpdate();
+                _anim.EditorUpdate();
             }
         }
     }

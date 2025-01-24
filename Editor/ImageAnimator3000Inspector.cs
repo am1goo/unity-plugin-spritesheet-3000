@@ -1,50 +1,51 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using Spritesheet3000;
 
 namespace Spritesheet3000.Editor
 {
     [CustomEditor(typeof(ImageAnimator3000))]
     public class ImageAnimator3000Inspector : UnityEditor.Editor
     {
-        private ImageAnimator3000 anim;
+        private ImageAnimator3000 _anim;
 
-        private string[] currentClipOptions = SpriteAnimationClip3000.EDITOR_EMPTY_CLIP_OPTIONS;
-        private float currentTime;
+        private string[] _currentClipOptions;
+        private float _currentTime;
 
         private void OnEnable()
         {
-            anim = target as ImageAnimator3000;
-            anim.EditorRefresh();
-            currentTime = 0;
-            currentClipOptions = anim.EditorCreateClipsOptions();
-
-            EditorApplication.update += Update;
+            _anim = target as ImageAnimator3000;
+            _anim.EditorRefresh();
         }
 
         private void OnDisable()
         {
-            anim = null;
-            EditorApplication.update -= Update;
+            _anim = null;
+        }
+
+        public override bool RequiresConstantRepaint()
+        {
+            return true;
         }
 
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
-            SpriteAnimator3000InspectorHelper.OnInspectorDraw(serializedObject, anim, ref currentTime, ref currentClipOptions);
+            SpriteAnimator3000InspectorHelper.OnInspectorDraw(serializedObject, _anim, ref _currentTime, ref _currentClipOptions);
 
             serializedObject.ApplyModifiedProperties();
+
+            EditorUpdate();
         }
 
-        private void Update()
+        private void EditorUpdate()
         {
-            if (!Application.isPlaying)
+            if (Application.isPlaying)
+                return;
+
+            if (_anim.playInEditor)
             {
-                if (anim.playInEditor)
-                {
-                    anim.EditorUpdate();
-                }
+                _anim.EditorUpdate();
             }
         }
     }
