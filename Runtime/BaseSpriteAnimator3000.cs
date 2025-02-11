@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Spritesheet3000
 {
-    public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour
+    public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour where T: UnityEngine.Object
     {
         [SerializeField] private T m_renderer;
         [SerializeField] private List<T> m_copyRenderers;
@@ -167,7 +167,7 @@ namespace Spritesheet3000
             for (int i = 0; i < m_copyRenderers.Count; ++i)
             {
                 var r = m_copyRenderers[i];
-                if (r == null)
+                if (IsNull(r))
                     continue;
 
                 SetRendererSprite(r, sprite);
@@ -181,7 +181,7 @@ namespace Spritesheet3000
             for (int i = 0; i < m_copyRenderers.Count; ++i)
             {
                 var r = m_copyRenderers[i];
-                if (r == null)
+                if (IsNull(r))
                     continue;
 
                 SetRendererFlip(r, flipX, flipY);
@@ -275,7 +275,7 @@ namespace Spritesheet3000
             for (int i = 0; i < spritesheets.Count; ++i)
             {
                 var spritesheet = spritesheets[i];
-                if (spritesheet == null)
+                if (IsNull(spritesheet))
                     continue;
 
                 if (spritesheet.cachedName == clipName)
@@ -304,11 +304,11 @@ namespace Spritesheet3000
 
         public float GetClipLength(string clipName)
         {
-            var res = GetClip(clipName);
-            if (res == null)
+            var clip = GetClip(clipName);
+            if (IsNull(clip))
                 return 0;
 
-            return res.GetLength(totalTimeScale);
+            return clip.GetLength(totalTimeScale);
         }
 
         public bool GetClips(List<SpriteAnimationClip3000> result)
@@ -325,6 +325,16 @@ namespace Spritesheet3000
                 result.Add(spritesheets[i]);
             }
             return true;
+        }
+
+        protected static bool IsNull(UnityEngine.Object obj)
+        {
+            return !IsNotNull(obj);
+        }
+
+        protected static bool IsNotNull(UnityEngine.Object obj)
+        {
+            return obj != null && ReferenceEquals(obj, null) == false;
         }
 
 #if UNITY_EDITOR
@@ -388,7 +398,7 @@ namespace Spritesheet3000
                 for (int i = 0; i < spritesheets.Count; ++i)
                 {
                     var spritesheet = spritesheets[i];
-                    if (spritesheet == null)
+                    if (IsNull(spritesheet))
                         continue;
 
                     clipNames.Add(spritesheet.name);

@@ -13,7 +13,7 @@ namespace Spritesheet3000.Editor
         private static readonly GUIContent _flipYLabel = new GUIContent("Flip Y");
         private static readonly GUIContent _randomStartLabel = new GUIContent("Random Start");
 
-        public static void OnInspectorDraw<T>(SerializedObject serializedObject, BaseSpriteAnimator3000<T> anim, ref float currentTime, ref string[] currentClipOptions)
+        public static void OnInspectorDraw<T>(SerializedObject serializedObject, BaseSpriteAnimator3000<T> anim, ref float currentTime, ref string[] currentClipOptions) where T : UnityEngine.Object
         {
             if (anim == null)
                 return;
