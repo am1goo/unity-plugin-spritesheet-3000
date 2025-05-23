@@ -377,6 +377,8 @@ namespace Spritesheet3000
             public void Apply(string pathInAssets)
             {
                 var texImporter = AssetImporter.GetAtPath(pathInAssets) as TextureImporter;
+                if (texImporter == null)
+                    return;
 
                 var texSettings = new TextureImporterSettings();
                 texImporter.ReadTextureSettings(texSettings);
