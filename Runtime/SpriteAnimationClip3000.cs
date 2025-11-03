@@ -33,8 +33,10 @@ namespace Spritesheet3000
             {
                 if (Application.isPlaying)
                 {
-                    if (_cachedName == null)
+                    if (string.IsNullOrEmpty(_cachedName))
+                    {
                         _cachedName = this.name;
+                    }
                     return _cachedName;
                 }
                 else
