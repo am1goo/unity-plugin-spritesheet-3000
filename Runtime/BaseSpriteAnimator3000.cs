@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace Spritesheet3000
 {
@@ -64,20 +65,12 @@ namespace Spritesheet3000
         private int _clipIndex = 0;
         public int clipIndex => _clipIndex;
 
-        public SpriteAnimationClip3000 clip { get { return GetClipInternal(clipIndex); } }
-        public string clipName { get { return clip?.cachedName; } }
-        public float clipLength { get { return clip?.GetLength(totalTimeScale) ?? 0; } }
-        public float normalizedTime
-        {
-            get
-            {
-                var l = clipLength;
-                if (l > 0)
-                    return _clipTime / clipLength;
-                else
-                    return 0f;
-            }
-        }
+        public SpriteAnimationClip3000 clip { get { return GetClip(_clipIndex); } }
+        public string clipName => clip?.cachedName;
+        public float clipLength => clip?.GetLength(timeScale) ?? 0.0f;
+        public float clipLengthUnscaled => clip?.length ?? 0.0f;
+
+        public float normalizedTime => clip?.GetNormalizedTime(_clipTime, timeScale) ?? 0.0f;
 
         public delegate void OnAnimationCompletedDelegate(SpriteAnimationClip3000 clip);
         private OnAnimationCompletedDelegate _callback = null;
@@ -100,9 +93,12 @@ namespace Spritesheet3000
         {
             if (m_randomStart)
             {
-                var l = clipLength;
-                if (l > 0)
-                    _clipTime = UnityEngine.Random.Range(0f, l);
+                var clip = GetClip(_clipIndex);
+                if (clip != null)
+                {
+                    var clipLength = clip.GetLength(timeScale);
+                    _clipTime = UnityEngine.Random.Range(0f, clipLength);
+                }
             }
         }
 
@@ -119,22 +115,23 @@ namespace Spritesheet3000
 
         private void Animation(SpriteAnimationClip3000 clip, float deltaTime)
         {
+            if (clip == null)
+                return;
+
             if (deltaTime < 0)
                 return;
 
-            Sprite sprite = SampleByNormalizedTime(clip, normalizedTime);
-            ChangeSprite(sprite);
-
+            var normalizedTime = clip.GetNormalizedTime(_clipTime, timeScale);
             _clipTime += deltaTime;
 
-            var l = clipLength;
-            if (_clipTime < l)
+            var sprite = clip.SampleByNormalizedTime(normalizedTime);
+            ChangeSprite(sprite);
+
+            var clipLength = clip.GetLength(timeScale);
+            if (_clipTime < clipLength)
                 return;
 
-            _clipTime = l > 0f ? Mathf.Repeat(_clipTime, l) : 0f;
-
-            if (clip == null)
-                return;
+            _clipTime = clipLength > 0f ? Mathf.Repeat(_clipTime, clipLength) : 0f;
 
             OnAnimationCompleted(clip);
 
@@ -158,33 +155,6 @@ namespace Spritesheet3000
         protected virtual void OnAnimationCompleted(SpriteAnimationClip3000 clip)
         {
             //do nothing
-        }
-
-        public Sprite SampleByFrameIndex(SpriteAnimationClip3000 clip, int frameIndex)
-        {
-            if (clip == null)
-                return null;
-            return clip.SampleByFrameIndex(frameIndex);
-        }
-
-        public Sprite SampleByNormalizedTime(SpriteAnimationClip3000 clip, float normalizedTime)
-        {
-            if (clip == null)
-                return null;
-
-            return clip.SampleByNormalizedTime(normalizedTime);
-        }
-
-        private SpriteAnimationClip3000 GetClipInternal(int clipIndex)
-        {
-            var spritesheets = GetSpritesheets();
-            if (spritesheets == null || spritesheets.Count == 0)
-                return null;
-
-            if (clipIndex < 0 || clipIndex >= spritesheets.Count)
-                return null;
-
-            return spritesheets[clipIndex];
         }
 
         private void ChangeSprite(Sprite sprite)
@@ -215,16 +185,16 @@ namespace Spritesheet3000
             }
         }
 
-        private bool ChangeClipIndex(string clipName)
+        private int ChangeClipIndex(string clipName)
         {
             int idx = GetClipIndex(clipName);
-            if (idx == -1)
-                return false;
+            if (idx < 0)
+                return idx;
 
             _clipIndex = idx;
-            _clipTime = 0;
+            _clipTime = 0.0f;
             OnClipChanged(clip);
-            return true;
+            return idx;
         }
 
         protected virtual void OnClipChanged(SpriteAnimationClip3000 clip)
@@ -237,7 +207,7 @@ namespace Spritesheet3000
             ChangeSprite(null);
         }
 
-        public bool Play(SpriteAnimationClip3000 clip, OnAnimationCompletedDelegate callback = null)
+        public bool Play(SpriteAnimationClip3000 clip, float normalizedTime = 0.0f, OnAnimationCompletedDelegate callback = null)
         {
             if (clip == null)
                 return false;
@@ -249,17 +219,17 @@ namespace Spritesheet3000
                 spritesheets.Add(clip);
             }
 
-            var changed = Play(clip.cachedName, callback);
+            var changed = Play(clip.cachedName, normalizedTime, callback);
             UnityEngine.Profiling.Profiler.EndSample();
             return changed;
         }
 
-        public bool Play(string clipName, OnAnimationCompletedDelegate callback = null)
+        public bool Play(string clipName, float normalizedTime = 0.0f, OnAnimationCompletedDelegate callback = null)
         {
-            return PlayInternal(clipName, immediately: false, callback);
+            return PlayInternal(clipName, immediately: false, normalizedTime, callback);
         }
 
-        public bool PlayForce(SpriteAnimationClip3000 clip, OnAnimationCompletedDelegate callback = null)
+        public bool PlayForce(SpriteAnimationClip3000 clip, float normalizedTime = 0.0f, OnAnimationCompletedDelegate callback = null)
         {
             if (clip == null)
                 return false;
@@ -271,24 +241,30 @@ namespace Spritesheet3000
                 spritesheets.Add(clip);
             }
 
-            var changed = PlayForce(clip.cachedName, callback);
+            var changed = PlayForce(clip.cachedName, normalizedTime, callback);
             UnityEngine.Profiling.Profiler.EndSample();
             return changed;
         }
 
-        public bool PlayForce(string clipName, OnAnimationCompletedDelegate callback = null)
+        public bool PlayForce(string clipName, float normalizedTime = 0.0f, OnAnimationCompletedDelegate callback = null)
         {
-            return PlayInternal(clipName, immediately: true, callback);
+            return PlayInternal(clipName, immediately: true, normalizedTime, callback);
         }
 
-        private bool PlayInternal(string clipName, bool immediately, OnAnimationCompletedDelegate callback = null)
+        private bool PlayInternal(string clipName, bool immediately, float normalizedTime = 0.0f, OnAnimationCompletedDelegate callback = null)
         {
             if (this.clipName == clipName && !immediately)
                 return false;
 
-            bool res = ChangeClipIndex(clipName);
-            if (!res)
+            var clipIndex = ChangeClipIndex(clipName);
+            if (clipIndex < 0)
                 return false;
+
+            if (normalizedTime > 0.0f)
+            {
+                var clip = GetClip(clipIndex);
+                _clipTime = clip?.GetLengthByNormalizedTime(normalizedTime) ?? 0.0f;
+            }
 
             Animation(clip, 0);
 
@@ -325,8 +301,19 @@ namespace Spritesheet3000
             if (idx == -1)
                 return null;
 
+            return GetClip(idx);
+        }
+
+        public SpriteAnimationClip3000 GetClip(int clipIndex)
+        {
             var spritesheets = GetSpritesheets();
-            return spritesheets[idx];
+            if (spritesheets == null || spritesheets.Count == 0)
+                return null;
+
+            if (clipIndex < 0 || clipIndex >= spritesheets.Count)
+                return null;
+
+            return spritesheets[clipIndex];
         }
 
         public float GetClipLength(string clipName)
@@ -406,32 +393,34 @@ namespace Spritesheet3000
 
         public void EditorSampleByNormalizedTime(SpriteAnimationClip3000 clip, float normalizedtime)
         {
-            Sprite sprite = SampleByNormalizedTime(clip, normalizedtime);
+            Sprite sprite = clip != null ? clip.SampleByNormalizedTime(normalizedtime) : null;
             ChangeSprite(sprite);
         }
 
         public void EditorSampleByFrameIndex(SpriteAnimationClip3000 clip, int frameIndex)
         {
-            Sprite sprite = SampleByFrameIndex(clip, frameIndex);
+            Sprite sprite = clip != null ? clip.SampleByFrameIndex(frameIndex) : null;
             ChangeSprite(sprite);
         }
 
         public virtual string[] EditorCreateClipsOptions()
         {
-            var clipNames = new List<string>();
-            var spritesheets = GetSpritesheets();
-            if (spritesheets != null)
+            using (ListPool<string>.Get(out var cache))
             {
-                for (int i = 0; i < spritesheets.Count; ++i)
+                var spritesheets = GetSpritesheets();
+                if (spritesheets != null)
                 {
-                    var spritesheet = spritesheets[i];
-                    if (IsNull(spritesheet))
-                        continue;
+                    for (int i = 0; i < spritesheets.Count; ++i)
+                    {
+                        var spritesheet = spritesheets[i];
+                        if (IsNull(spritesheet))
+                            continue;
 
-                    clipNames.Add(spritesheet.name);
+                        cache.Add(spritesheet.name);
+                    }
                 }
+                return cache.ToArray();
             }
-            return clipNames.ToArray();
         }
 
         public void EditorRefresh()

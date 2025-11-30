@@ -49,9 +49,24 @@ namespace Spritesheet3000
         public SpriteAtlas spriteAtlas { get { return m_spriteAtlas; } }
         public int framesCount { get { return m_frames.Count; } }
         public float length { get { return m_length; } }
+
+        public float GetNormalizedTime(float clipTime, float timeScale)
+        {
+            var clipLength = GetLength(timeScale);
+            if (clipLength > 0.0)
+                return clipTime / clipLength;
+
+            return 0.0f;
+        }
+
         public float GetLength(float timeScale)
         {
-            return length / timeScale;
+            return m_length / timeScale;
+        }
+
+        public float GetLengthByNormalizedTime(float normalizedTime)
+        {
+            return Mathf.Clamp01(normalizedTime) * m_length;
         }
 
         public Sprite SampleByFrameIndex(int frameIndex)
@@ -61,13 +76,13 @@ namespace Spritesheet3000
 
         public Sprite SampleByNormalizedTime(float normalizedTime)
         {
-            float time = Mathf.Clamp01(normalizedTime) * m_length;
+            float time = GetLengthByNormalizedTime(normalizedTime);
             return SampleByTime(time);
         }
 
         public int GetFrameIndexByNormalizedTime(float normalizedTime)
         {
-            float time = Mathf.Clamp01(normalizedTime) * m_length;
+            float time = GetLengthByNormalizedTime(normalizedTime);
             return GetFrameIndexByTime(time);
         }
 
