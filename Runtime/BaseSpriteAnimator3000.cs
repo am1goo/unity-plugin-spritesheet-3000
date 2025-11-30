@@ -4,8 +4,10 @@ using UnityEngine;
 
 namespace Spritesheet3000
 {
-    public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour where T: UnityEngine.Object
+    public abstract class BaseSpriteAnimator3000<T> : MonoBehaviour where T : Component
     {
+        private static readonly SpriteAnimatorTimer3000 _timer = new SpriteAnimatorTimer3000();
+
         [SerializeField] private T m_renderer;
         [SerializeField] private List<T> m_copyRenderers;
         [SerializeField] [HideInInspector] private ESpriteAnimatorThread m_timeThread = ESpriteAnimatorThread.RelatedOnTimeScale;
@@ -25,6 +27,7 @@ namespace Spritesheet3000
         [SerializeField]
         [HideInInspector]
         private bool m_randomStart;
+        protected bool randomStart => m_randomStart;
 
         [SerializeField]
         [HideInInspector]
@@ -76,12 +79,14 @@ namespace Spritesheet3000
             }
         }
 
-        private Action _callback = null;
-
-        private static readonly SpriteAnimatorTimer3000 timer = new SpriteAnimatorTimer3000();
+        public delegate void OnAnimationCompletedDelegate(SpriteAnimationClip3000 clip);
+        private OnAnimationCompletedDelegate _callback = null;
 
         protected virtual void OnValidate()
         {
+            if (m_renderer == null)
+                m_renderer = GetComponent<T>();
+
             if (m_copyRenderers == null)
                 m_copyRenderers = new List<T>();
         }
@@ -108,7 +113,7 @@ namespace Spritesheet3000
 
         private void Update()
         {
-            var dt = timer.GetDeltaTime(m_timeThread);
+            var dt = _timer.GetDeltaTime(m_timeThread);
             Animation(clip, dt);
         }
 
@@ -123,15 +128,36 @@ namespace Spritesheet3000
             _clipTime += deltaTime;
 
             var l = clipLength;
-            if (_clipTime >= l)
+            if (_clipTime < l)
+                return;
+
+            _clipTime = l > 0f ? Mathf.Repeat(_clipTime, l) : 0f;
+
+            if (clip == null)
+                return;
+
+            OnAnimationCompleted(clip);
+
+            if (_callback != null)
             {
-                _clipTime = l > 0f ? Mathf.Repeat(_clipTime, l) : 0f;
-                if (_callback != null)
+                try
                 {
-                    _callback();
+                    _callback(clip);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
+                finally
+                {
                     _callback = null;
                 }
             }
+        }
+
+        protected virtual void OnAnimationCompleted(SpriteAnimationClip3000 clip)
+        {
+            //do nothing
         }
 
         public Sprite SampleByFrameIndex(SpriteAnimationClip3000 clip, int frameIndex)
@@ -145,6 +171,7 @@ namespace Spritesheet3000
         {
             if (clip == null)
                 return null;
+
             return clip.SampleByNormalizedTime(normalizedTime);
         }
 
@@ -210,7 +237,7 @@ namespace Spritesheet3000
             ChangeSprite(null);
         }
 
-        public bool Play(SpriteAnimationClip3000 clip, Action callback = null)
+        public bool Play(SpriteAnimationClip3000 clip, OnAnimationCompletedDelegate callback = null)
         {
             if (clip == null)
                 return false;
@@ -227,12 +254,12 @@ namespace Spritesheet3000
             return changed;
         }
 
-        public bool Play(string clipName, Action callback = null)
+        public bool Play(string clipName, OnAnimationCompletedDelegate callback = null)
         {
             return PlayInternal(clipName, immediately: false, callback);
         }
 
-        public bool PlayForce(SpriteAnimationClip3000 clip, Action callback = null)
+        public bool PlayForce(SpriteAnimationClip3000 clip, OnAnimationCompletedDelegate callback = null)
         {
             if (clip == null)
                 return false;
@@ -249,12 +276,12 @@ namespace Spritesheet3000
             return changed;
         }
 
-        public bool PlayForce(string clipName, Action callback = null)
+        public bool PlayForce(string clipName, OnAnimationCompletedDelegate callback = null)
         {
             return PlayInternal(clipName, immediately: true, callback);
         }
 
-        private bool PlayInternal(string clipName, bool immediately, Action callback = null)
+        private bool PlayInternal(string clipName, bool immediately, OnAnimationCompletedDelegate callback = null)
         {
             if (this.clipName == clipName && !immediately)
                 return false;
