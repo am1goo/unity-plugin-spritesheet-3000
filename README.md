@@ -102,6 +102,7 @@ public class Example : MonoBehaviour
 
 ## Using in
 - [Sin Slayers: Reign of The 8th](https://sinslayers.com) - RPG with roguelike elements set in a dark fantasy world, where your choices determine how challenging the fights and enemies will be.
+- [Sin Slayers: Meat & Greed](https://store.steampowered.com/app/3720590/Sin_Slayers_Meat__Greed/) - A chill idle-mining sim that lives on your desktop. Dig rocks, collect gems, buy upgrades, feed your greed, and uncover shiny surprises while you do other things.
 
 ## Contribute
 Contribution in any form is very welcome. Bugs, feature requests or feedback can be reported in form of Issues.
