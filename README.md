@@ -43,7 +43,8 @@ folder|-
       |- {clipname}_04.png
       |- ...
       |- {clipname}_xx.png
-      |- {clipname}_atlas.png
+      |- {clipname}.asset
+      |- {clipname}_atlas.asset
 ```
 
 ## How to use
